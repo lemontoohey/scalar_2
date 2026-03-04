@@ -21,12 +21,10 @@ export default function App() {
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       
-      // Deep sub-bass frequency
       osc.type = 'sine'
       osc.frequency.setValueAtTime(60, ctx.currentTime)
       osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 1.5)
       
-      // Smooth envelope
       gain.gain.setValueAtTime(0, ctx.currentTime)
       gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.1)
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0)
@@ -42,20 +40,17 @@ export default function App() {
   }
 
   useEffect(() => {
-    // Sync: mist is 3500ms. Buttons appear at 3200ms
     const t = setTimeout(() => {
       setShowButtons(true)
-      // Attempt to play audio
       playSubBass()
     }, 3200)
     return () => clearTimeout(t)
-  }, [])
+  },[])
 
   return (
     <main 
       className="relative w-full h-screen overflow-hidden bg-black text-[#FCFBF8] selection:bg-red-900 selection:text-white"
       onClick={() => {
-        // Init audio context on first click to unlock for future if autoplay failed
         if (!audioContextRef.current) {
           audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
           audioContextRef.current.resume()
@@ -65,15 +60,12 @@ export default function App() {
       <ThermalCursor hoverColor={hoveredColor} />
       <ScanlineOverlay />
       
-      {/* Z-0: Ambient Backglow */}
       <div className="absolute inset-0 z-0 opacity-60 pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(74,0,0,0.5)_0%,rgba(31,5,16,0.3)_40%,transparent_80%)]" />
 
-      {/* Z-10: Bulletproof WebGL Render Wrapper */}
       <div className="absolute inset-0 z-10 pointer-events-none opacity-80 mix-blend-screen" style={{ transform: 'translateZ(0)' }}>
         <CureSequenceShader />
       </div>
 
-      {/* Z-50: Interface and Interactivity Layers */}
       <section className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none">
         <div className="text-center mt-[-8vh] pointer-events-auto z-10" style={{ textShadow: '0 0 40px rgba(168, 0, 0, 0.4)' }}>
           <motion.h1
@@ -96,36 +88,30 @@ export default function App() {
           </motion.p>
         </div>
 
+        {/* Updated Terminal Buttons */}
         <motion.div
-          className="absolute bottom-[25vh] flex justify-center gap-12 w-full pointer-events-auto z-20"
+          className="absolute bottom-[25vh] flex justify-center gap-16 w-full pointer-events-auto z-20"
           initial={{ opacity: 0, y: 15, scale: 0.9, filter: 'blur(12px)' }}
           animate={showButtons ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' } : { opacity: 0, y: 15, scale: 0.9, filter: 'blur(12px)' }}
-          transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 2.5, ease:[0.16, 1, 0.3, 1] }}
         >
-          <motion.button 
+          <button 
             onClick={() => setActiveCategory('organic')}
-            className="text-lg font-light tracking-[0.2em] text-[#FCFBF8]/60 hover:text-white p-4 transition-colors lowercase"
-            style={{ fontFamily: 'var(--font-archivo)' }}
-            whileHover={{ scale: 1.05, opacity: 1, textShadow: "0 0 8px rgba(255,255,255,0.5)" }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            className="text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors pb-2"
             data-thermal-hover
           >
-            [organic]
-          </motion.button>
-          <motion.button 
+            [ ORGANIC ]
+          </button>
+          <button 
             onClick={() => setActiveCategory('inorganic')}
-            className="text-lg font-light tracking-[0.2em] text-[#FCFBF8]/60 hover:text-white p-4 transition-colors lowercase"
-            style={{ fontFamily: 'var(--font-archivo)' }}
-            whileHover={{ scale: 1.05, opacity: 1, textShadow: "0 0 8px rgba(255,255,255,0.5)" }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            className="text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors pb-2"
             data-thermal-hover
           >
-            [inorganic]
-          </motion.button>
+            [ INORGANIC ]
+          </button>
         </motion.div>
       </section>
 
-      {/* Z-70: Collection Grid Overlay */}
       <AnimatePresence>
         {activeCategory && (
           <CollectionGrid 
