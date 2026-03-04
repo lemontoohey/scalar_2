@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { SPECIMEN_DATA, Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
 import SpecimenDetail from '@/components/SpecimenDetail'
+import ShopScreen from '@/components/ShopScreen' // Add this import
 
 function DecryptText({ text, isHovering, onComplete }: { text: string; isHovering: boolean; onComplete: () => void }) {
   const [displayText, setDisplayText] = useState(text)
@@ -137,10 +138,14 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
   )
 }
 
-export default function CollectionGrid({ category, onClose, onHoverColor }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void }) {
+export default function CollectionGrid({ category, onClose, onHoverColor, onGoToShop }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void, onGoToShop: (specimen: Specimen, variant: string) => void }) {
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
-  const [hoveredHex, setHoveredHex] = useState<string | null>(null)
+  const[hoveredHex, setHoveredHex] = useState<string | null>(null)
+  
   const [selectedSpecimen, setSelectedSpecimen] = useState<Specimen | null>(null)
+  
+  // NEW: State for tracking if user is in checkout
+  const[shopData, setShopData] = useState<{specimen: Specimen, variant: string} | null>(null)
 
   useEffect(() => {
     onHoverColor(hoveredHex)
@@ -190,15 +195,15 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
 
       <div className="relative z-10 w-full px-6 py-6 sm:px-12">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-8 pb-6 mb-16 border-b border-[#FCFBF8]/10 bg-[#030F08]/90 backdrop-blur-xl flex items-center justify-center">
-          
-          <button 
-            data-thermal-hover="true"
-            onClick={onClose} 
-            className="absolute left-0 top-1/2 -translate-y-1/2 text-[10px] md:text-[11px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-[#FCFBF8] uppercase font-mono transition-colors"
-          >
-            [ ← SCALAR ]
-          </button>
+        <div className="sticky top-0 z-50 pt-8 pb-6 mb-16 border-b border-white/10 bg-[#040404]/90 backdrop-blur-xl flex items-center justify-center">
+  
+  <button 
+    data-thermal-hover="true"
+    onClick={onClose} 
+    className="absolute left-0 top-1/2 -translate-y-1/2 text-xl md:text-2xl font-light tracking-[0.4em] text-[#A80000] hover:text-[#ff3333] uppercase font-[var(--font-archivo)] transition-colors"
+  >
+    SCALAR
+  </button>
 
           <h2 className="text-xl md:text-3xl font-light tracking-[0.4em] uppercase font-[var(--font-archivo)] text-[#FCFBF8] flex gap-4">
             {category} <span className="text-[#A80000] drop-shadow-[0_0_12px_rgba(168,0,0,0.5)]">REGISTRY</span>
@@ -221,15 +226,30 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         </div>
       </div>
 
-      {/* DETAIL PAGE OVERLAY */}
       <AnimatePresence>
-        {selectedSpecimen && (
-          <SpecimenDetail 
-            specimen={selectedSpecimen} 
-            onClose={() => setSelectedSpecimen(null)} 
-          />
-        )}
-      </AnimatePresence>
+         {/* Render Specimen Detail */}
+         {selectedSpecimen && !shopData && (
+           <SpecimenDetail 
+             specimen={selectedSpecimen} 
+             onClose={() => setSelectedSpecimen(null)} 
+             onGoToShop={(specimen, variant) => setShopData({specimen, variant})} // New prop handler
+           />
+         )}
+
+         {/* Render Shop Screen (Triggers after the smoke floods screen) */}
+         {shopData && (
+           <ShopScreen 
+             specimen={shopData.specimen} 
+             variant={shopData.variant} 
+             onClose={() => {
+                // Returns user directly to the Landing screen
+                setShopData(null)
+                setSelectedSpecimen(null)
+                onClose() // Calls CollectionGrid's onClose, which in App.tsx sets view to 'home'
+             }} 
+           />
+         )}
+       </AnimatePresence>
     </motion.div>
   )
 }
