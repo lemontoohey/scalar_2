@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import CureSequenceShader from '@/components/CureSequenceShader'
 import CollectionGrid from '@/components/CollectionGrid'
@@ -13,7 +13,7 @@ export default function App() {
   const [hoveredColor, setHoveredColor] = useState<string | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
 
-  const playSubBass = () => {
+  const playSubBass = useCallback(() => {
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -39,7 +39,7 @@ export default function App() {
     } catch (e) {
       console.error('Audio play failed', e)
     }
-  }
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -47,7 +47,7 @@ export default function App() {
       playSubBass()
     }, 3200)
     return () => clearTimeout(t)
-  },[])
+  },[playSubBass])
 
   const handleOpenCollection = (category: 'organic' | 'inorganic') => {
     setCollectionCategory(category)
@@ -91,7 +91,7 @@ export default function App() {
             <section className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none">
               <div className="text-center mt-[-8vh] pointer-events-auto z-10" style={{ textShadow: '0 0 40px rgba(168, 0, 0, 0.4)', transform: 'translateX(-1%)' }}>
                 <motion.h1
-                  className="text-7xl md:text-9xl font-light tracking-[0.4em] text-[#FCFBF8]"
+                  className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.4em] text-[#FCFBF8]"
                   initial={{ opacity: 0, filter: 'blur(20px)' }}
                   animate={{ opacity: 1, filter: 'blur(0px)' }}
                   transition={{ duration: 4.0, delay: 0.5, ease: 'easeOut' }}
@@ -100,7 +100,7 @@ export default function App() {
                   SCALAR
                 </motion.h1>
                 <motion.p
-                  className="text-lg md:text-xl font-light tracking-[0.6em] lowercase text-[#FCFBF8]/80 mt-4"
+                  className="text-base sm:text-lg md:text-xl font-light tracking-[0.6em] lowercase text-[#FCFBF8]/80 mt-4"
                   initial={{ opacity: 0, filter: 'blur(10px)' }}
                   animate={{ opacity: 1, filter: 'blur(0px)' }}
                   transition={{ duration: 3.5, delay: 1.5, ease: 'easeOut' }}
@@ -118,14 +118,16 @@ export default function App() {
               >
                 <button
                   onClick={() => handleOpenCollection('organic')}
-                  className="text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors pb-2"
+                  className="min-h-[44px] min-w-[44px] flex items-center justify-center text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors pb-2"
+                  aria-label="View Organic Specimens"
                   data-thermal-hover
                 >
                   [ ORGANIC ]
                 </button>
                 <button
                   onClick={() => handleOpenCollection('inorganic')}
-                  className="text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors pb-2"
+                  className="min-h-[44px] min-w-[44px] flex items-center justify-center text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors pb-2"
+                  aria-label="View Inorganic Specimens"
                   data-thermal-hover
                 >
                   [ INORGANIC ]

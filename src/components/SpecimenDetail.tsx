@@ -1,97 +1,35 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Canvas, useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
 import { Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
 
-// --- 3D MOLECULAR LATTICE ---
-function LatticeShape({ hexColor, phase, specimenCode }: { hexColor: string, phase: string, specimenCode: string }) {
-  const meshRef = useRef<THREE.Mesh>(null)
-
-  const geometry = useMemo(() => {
-    const charSum = specimenCode.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    const shapeType = charSum % 5
-    switch(shapeType) {
-      case 0: return <icosahedronGeometry args={[2.2, 0]} />
-      case 1: return <octahedronGeometry args={[2.5, 0]} />
-      case 2: return <dodecahedronGeometry args={[2.0, 0]} />
-      case 3: return <torusKnotGeometry args={[1.5, 0.4, 64, 8]} />
-      case 4: default: return <tetrahedronGeometry args={[2.5, 0]} />
-    }
-  }, [specimenCode])
-
-  useFrame((state, delta) => {
-    if (!meshRef.current) return
-    
-    // Smoothly accelerate to a massive speed right before the mist morph
-    let targetSpeed = 0.2
-    if (phase === 'spinning') targetSpeed = 15.0 // Intense spin
-    
-    meshRef.current.rotation.y += delta * targetSpeed
-    meshRef.current.rotation.x += delta * (targetSpeed * 0.8)
-
-    const material = meshRef.current.material as THREE.MeshBasicMaterial
-    const isDyed = phase !== 'falling'
-    
-    const targetColor = new THREE.Color(isDyed ? hexColor : '#222222')
-    material.color.lerp(targetColor, delta * 4)
-    material.opacity = THREE.MathUtils.lerp(material.opacity, isDyed ? 0.9 : 0.1, delta * 3)
-  })
-
+// --- ORGANIC APPARITION TEXT COMPONENT ---
+function ApparateText({ children, delay = 0, className, style }: { children: React.ReactNode, delay?: number, className?: string, style?: React.CSSProperties }) {
   return (
-    <mesh ref={meshRef}>
-      {geometry}
-      <meshBasicMaterial wireframe transparent opacity={0.1} color="#222222" />
-    </mesh>
+    <motion.div
+      initial={{ opacity: 0, filter: 'blur(20px)', y: 20 }}
+      animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+      transition={{ duration: 2.0, delay, ease: [0.16, 1, 0.3, 1] }} // Fast, organic settling
+      className={className}
+      style={style}
+    >
+      {children}
+    </motion.div>
   )
-}
-
-// --- TYPEWRITER HOOK ---
-function TypewriterText({ text, start, delayMs = 0, speed = 15, className, style }: { text: string, start: boolean, delayMs?: number, speed?: number, className?: string, style?: any }) {
-  const[displayed, setDisplayed] = useState('')
-
-  useEffect(() => {
-    if (!start) return
-    const t = setTimeout(() => {
-      let i = 0
-      const interval = setInterval(() => {
-        setDisplayed(text.slice(0, i + 1))
-        i++
-        if (i >= text.length) clearInterval(interval)
-      }, speed)
-      return () => clearInterval(interval)
-    }, delayMs)
-    return () => clearTimeout(t)
-  }, [text, start, delayMs, speed])
-
-  return <span className={className} style={style}>{displayed}</span>
 }
 
 // --- MAIN COMPONENT ---
 export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { specimen: Specimen, onClose: () => void, onGoToShop: (specimen: Specimen, variant: string) => void }) {
-  const[phase, setPhase] = useState<'falling' | 'dyed' | 'spinning' | 'mist' | 'flooding'>('falling')
-  const[startTyping, setStartTyping] = useState(false)
-  
+  const [phase, setPhase] = useState<'clearing' | 'idle' | 'flooding'>('clearing')
   const [selectedVariant, setSelectedVariant] = useState<'soup' | 'rothko' | null>(null)
   const [showTechStack, setShowTechStack] = useState(false)
 
   // Timeline Sequence
   useEffect(() => {
-    // 1. Smoke starts clearing, lattice absorbs color
-    const t1 = setTimeout(() => {
-      setPhase('dyed')
-      setStartTyping(true)
-    }, 1000) 
-    
-    // 2. Spins incredibly fast for 1.5s
-    const t2 = setTimeout(() => setPhase('spinning'), 2500) 
-    
-    // 3. Transforms into ethereal hanging mist
-    const t3 = setTimeout(() => setPhase('mist'), 4000) 
-
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
-  },[])
+    // Mist finishes apparating around 3.5s, text settles around 2s
+    const t = setTimeout(() => setPhase('idle'), 3500) 
+    return () => clearTimeout(t)
+  }, [])
 
   const handleAddToCart = () => {
     if (!selectedVariant) return
@@ -106,115 +44,108 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
       className="fixed inset-0 z-[100] bg-[#020202] text-[#FCFBF8] overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
     >
+      {/* CSS for Mist Floating & Morphing */}
       <style>{`
         @keyframes morphMist {
-          0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg) scale(1); }
-          34% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; transform: rotate(120deg) scale(1.05); }
-          67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; transform: rotate(240deg) scale(0.95); }
-          100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(360deg) scale(1); }
+          0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg); }
+          100% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; transform: rotate(360deg); }
         }
-        .animate-morph { animation: morphMist 12s ease-in-out infinite alternate; }
+        @keyframes floatPulse {
+          0% { transform: translateY(0px) scale(1); opacity: 0.8; }
+          50% { transform: translateY(-40px) scale(1.05); opacity: 1; }
+          100% { transform: translateY(0px) scale(1); opacity: 0.8; }
+        }
+        .animate-morph { animation: morphMist 18s linear infinite alternate; }
+        .animate-float-pulse { animation: floatPulse 10s ease-in-out infinite alternate; }
       `}</style>
 
-      {/* THE SMOKE CLEARING REVEAL (Matches Shop Screen transition) */}
+      {/* THE SMOKE CLEARING REVEAL */}
       <motion.div 
         className="absolute inset-0 z-[110] pointer-events-none"
         style={{ backgroundColor: specimen.hex }}
         initial={{ opacity: 1, scale: 1 }}
         animate={{ opacity: 0, scale: 1.5 }}
-        transition={{ duration: 3.0, ease: "easeOut" }}
+        transition={{ duration: 3.5, ease: "easeOut" }}
       />
 
-      {/* 3D LATTICE & ETHEREAL MIST */}
+      {/* ETHEREAL MIST (Moved to Right, Larger, Bright Center) */}
       <motion.div 
-        className="absolute inset-0 z-10 flex items-center justify-center lg:justify-end lg:pr-[15vw] pointer-events-none"
-        animate={{ 
-          x: showTechStack ? -250 : 0, // Pushed LEFT when tech stack opens on the RIGHT
-          opacity: showTechStack ? 0.9 : 1 // Keep opacity high to see it under the glass
-        }}
-        transition={{ duration: 0.8, ease:[0.16, 1, 0.3, 1] }}
+        className="absolute right-[-30vw] md:right-[-10vw] top-[5%] bottom-0 flex items-center pointer-events-none z-10 will-change-[transform,opacity]"
+        initial={{ opacity: 0, scale: 1.5 }} // Apparates out of the smoke
+        animate={
+          phase === 'flooding' ? { opacity: 1, scale: 20 } : 
+          { opacity: 1, scale: 1 }
+        }
+        transition={{ duration: phase === 'flooding' ? 1.5 : 4.0, ease: "easeOut" }}
       >
-        {/* Ethereal Mist (Radial gradient for softer edges) */}
-        <motion.div 
-          className="absolute w-[600px] h-[600px] animate-morph pointer-events-none"
-          style={{ background: `radial-gradient(circle at 50% 50%, ${specimen.hex} 0%, ${specimen.hex}60 40%, transparent 70%)` }}
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={
-            phase === 'flooding' ? { opacity: 1, scale: 20, filter: 'blur(20px)' } : // Floods the screen
-            phase === 'mist' ? { opacity: 0.5, scale: 1.4, filter: 'blur(60px)' } : // Hangs in air, wide radius
-            { opacity: 0, scale: 0.5 }
-          }
-          transition={{ duration: phase === 'flooding' ? 1.5 : 2.5, ease: "easeInOut" }}
-        />
-
-        {/* 3D Canvas */}
-        <AnimatePresence>
-          {(phase === 'falling' || phase === 'dyed' || phase === 'spinning') && (
-            <motion.div key="lattice-canvas" exit={{ opacity: 0, scale: 0.5 }} transition={{ duration: 1 }} className="w-[600px] h-[600px] absolute">
-              <Canvas camera={{ position:[0, 0, 6], fov: 45 }} gl={{ alpha: true, antialias: true }}>
-                <LatticeShape hexColor={specimen.hex} phase={phase} specimenCode={specimen.code} />
-              </Canvas>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="animate-float-pulse">
+          <motion.div 
+            className="w-[800px] h-[800px] md:w-[1200px] md:h-[1200px] animate-morph will-change-[transform,opacity]"
+            style={{ 
+              // Bright white center fading outward into the specimen color, massive blur
+              background: `radial-gradient(circle at 50% 50%, #ffffff 0%, ${specimen.hex} 15%, ${specimen.hex}50 45%, transparent 75%)`,
+              filter: phase === 'flooding' ? 'blur(10px)' : 'blur(100px)'
+            }}
+            transition={{ duration: 1.5 }}
+          />
+        </div>
       </motion.div>
 
       {/* MAIN INTERFACE */}
-      <div className="relative z-30 h-full w-full flex flex-col pt-12 px-8 md:px-20 max-w-7xl mx-auto overflow-y-auto pb-24">
+      <div className="relative z-30 h-full w-full flex flex-col pt-12 px-8 md:px-20 max-w-7xl mx-auto overflow-y-auto pb-24 overscroll-contain touch-pan-y">
         
         {/* Top Nav */}
         <div className="flex justify-between items-start w-full">
-          {/* Red Scalar Back Button */}
+          {/* White Scalar Back Button */}
           <button 
             onClick={onClose} 
-            className="text-[11px] tracking-[0.3em] text-[#A80000] hover:text-[#ff3333] uppercase font-mono transition-colors"
+            className="min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            aria-label={`Back to ${specimen.category} Registry`} 
+            data-thermal-hover="true"
           >
-            [ ← {specimen.category}_REGISTRY ]
+            SCALAR
           </button>
           
           <button 
             onClick={() => setShowTechStack(!showTechStack)}
-            className="text-[11px] tracking-[0.3em] text-white/50 hover:text-white uppercase font-mono transition-colors border border-white/20 px-4 py-2 hover:bg-white/5"
+            className="min-h-[44px] min-w-[44px] text-[11px] tracking-[0.3em] text-white/50 hover:text-white uppercase font-mono transition-colors border border-white/20 px-4 py-2 hover:bg-white/5"
+            aria-label={showTechStack ? "Close System Architecture" : "View System Architecture"}
           >
             {showTechStack ? "[ CLOSE_ARCHITECTURE ]" : "[ VIEW_TECH_STACK ]"}
           </button>
         </div>
 
-        {/* Content Block */}
-        <motion.div className="flex-1 flex flex-col justify-center max-w-xl mt-12">
-          <div className="h-[80px] md:h-[110px]">
-            <TypewriterText 
-              text={specimen.code} start={startTyping} delayMs={0} speed={40}
-              className="text-7xl md:text-9xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] drop-shadow-2xl"
+        {/* Content Block (Replaced Typewriter with ApparateText) */}
+        <div className="flex-1 flex flex-col justify-center max-w-xl mt-12">
+          
+          <ApparateText delay={0.2} className="h-[80px] md:h-[110px]">
+            <span 
+              className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] drop-shadow-2xl"
               style={{ color: specimen.hex }} 
-            />
-          </div>
+            >
+              {specimen.code}
+            </span>
+          </ApparateText>
 
-          <div className="h-[30px] mt-2">
-            <TypewriterText 
-              text={specimen.chemicalName} start={startTyping} delayMs={500}
-              className="text-sm md:text-base text-white/50 tracking-[0.2em] font-mono uppercase"
-            />
-          </div>
+          <ApparateText delay={0.4} className="h-[30px] mt-2">
+            <span className="text-base sm:text-lg md:text-xl text-white/50 tracking-[0.2em] font-mono uppercase">
+              {specimen.chemicalName}
+            </span>
+          </ApparateText>
 
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: startTyping ? 1 : 0 }} transition={{ delay: 1.5, duration: 1 }}
-            className="mt-6 text-lg md:text-xl text-white/80 font-light leading-relaxed font-[var(--font-archivo)]"
-          >
+          <ApparateText delay={0.6} className="mt-6 text-base sm:text-lg md:text-xl text-white/80 font-light leading-relaxed font-[var(--font-archivo)]">
             {specimen.description}
-          </motion.div>
+          </ApparateText>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: startTyping ? 1 : 0, y: startTyping ? 0 : 20 }} transition={{ delay: 2, duration: 1 }}
-            className="mt-12 space-y-4"
-          >
+          <ApparateText delay={0.8} className="mt-12 space-y-4">
             <div className="text-[10px] text-white/40 font-mono tracking-widest uppercase mb-4 border-b border-white/10 pb-2">
               Select System Architecture
             </div>
 
             <button 
               onClick={() => setSelectedVariant('soup')}
-              className={cn("w-full text-left p-4 border transition-all duration-300 relative overflow-hidden group", selectedVariant === 'soup' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30")}
+              className={cn("w-full text-left min-h-[44px] p-4 border transition-all duration-300 relative overflow-hidden group", selectedVariant === 'soup' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30")}
+              aria-label="Select Sub-5 Micron Soup Architecture"
             >
               {selectedVariant === 'soup' && <div className="absolute inset-0 opacity-20" style={{ backgroundColor: specimen.hex }} />}
               <h4 className="text-sm font-mono tracking-widest text-white mb-2 relative z-10">[ SYS_01 : SUB-5 MICRON SOUP ]</h4>
@@ -223,24 +154,23 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
 
             <button 
               onClick={() => setSelectedVariant('rothko')}
-              className={cn("w-full text-left p-4 border transition-all duration-300 relative overflow-hidden group", selectedVariant === 'rothko' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30")}
+              className={cn("w-full text-left min-h-[44px] p-4 border transition-all duration-300 relative overflow-hidden group", selectedVariant === 'rothko' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30")}
+              aria-label="Select Rothko's UV-Flash Architecture"
             >
               {selectedVariant === 'rothko' && <div className="absolute inset-0 opacity-20" style={{ backgroundColor: specimen.hex }} />}
               <h4 className="text-sm font-mono tracking-widest text-white mb-2 relative z-10">[ SYS_02 : ROTHKO'S UV-FLASH ]</h4>
               <p className="text-xs text-white/60 font-light leading-relaxed relative z-10">Achieve a 50-layer stack in one session. "Infinite Open Time" to work the material, followed by "Instant Solidification" via UV-light for glass-like clarity.</p>
             </button>
-          </motion.div>
+          </ApparateText>
 
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: startTyping ? 1 : 0 }} transition={{ delay: 2.5, duration: 1 }}
-            className="mt-12 w-fit"
-          >
+          <ApparateText delay={1.0} className="mt-12 w-fit">
             <button 
               disabled={!selectedVariant || phase === 'flooding'}
               onClick={handleAddToCart}
-              className={cn("group relative px-8 py-4 border transition-all duration-300",
+              className={cn("group relative min-h-[44px] px-8 py-4 border transition-all duration-300",
                 !selectedVariant ? "border-white/10 opacity-50 cursor-not-allowed" : "border-white/20 hover:border-white/80 hover:bg-white/5"
               )}
+              aria-label={selectedVariant ? `Add ${specimen.code} with ${selectedVariant.toUpperCase()} to cart` : 'Select a system architecture first'}
             >
               <span className={cn("text-[11px] tracking-[0.3em] font-mono transition-colors duration-300",
                 !selectedVariant ? "text-white/30" : "text-white/70 group-hover:text-white"
@@ -248,11 +178,11 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
                 {selectedVariant ? `[ ADD_TO_CART : ${selectedVariant.toUpperCase()} ]` : '[ SELECT_SYSTEM_FIRST ]'}
               </span>
             </button>
-          </motion.div>
-        </motion.div>
+          </ApparateText>
+        </div>
       </div>
 
-      {/* SLIDE-OUT TECH STACK OVERLAY (From the RIGHT, Transparent Glassmorphism) */}
+      {/* SLIDE-OUT TECH STACK OVERLAY (Moves Over Top of Mist, Pure Glass Effect) */}
       <AnimatePresence>
         {showTechStack && (
           <motion.div 
@@ -260,14 +190,14 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ duration: 0.7, ease:[0.16, 1, 0.3, 1] }}
-            className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-[#020202]/30 backdrop-blur-xl border-l border-white/10 z-40 overflow-y-auto p-12 md:p-20"
+            className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-[#020202]/10 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-[130] overflow-y-auto overscroll-contain touch-pan-y p-6 md:p-12 lg:p-20 will-change-[transform,opacity]"
           >
             <h3 className="text-2xl font-light tracking-[0.3em] text-white mb-12 uppercase font-[var(--font-archivo)] mt-12">
               System <span className="text-white/30">Architecture</span>
             </h3>
 
             <div className="mb-16 relative z-10">
-              <div className="text-[10px] text-[#A80000] font-mono tracking-widest uppercase mb-6">// OPTICAL HIERARCHY</div>
+              <div className="text-[10px] text-white/50 font-mono tracking-widest uppercase mb-6">// OPTICAL HIERARCHY</div>
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-4 text-sm font-mono text-white/80"><span className="text-white/30">01.</span> CLARITY</div>
                 <div className="flex items-center gap-4 text-sm font-mono text-white/80"><span className="text-white/30">02.</span> CHROMA</div>

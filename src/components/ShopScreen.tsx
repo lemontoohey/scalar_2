@@ -5,25 +5,27 @@ export default function ShopScreen({ specimen, variant, onClose }: { specimen: S
   
   return (
     <motion.div 
-      className="fixed inset-0 z-[200] bg-[#030F08] text-[#FCFBF8] overflow-hidden flex flex-col items-center justify-center" // Changed background to #030F08
+      className="fixed inset-0 z-[200] bg-[#030F08] text-[#FCFBF8] overflow-hidden flex flex-col items-center justify-center overscroll-contain touch-pan-y" // Changed background to #030F08
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       {/* THE SMOKE CLEARING TRANSITION */}
       <motion.div 
-        className="absolute inset-0 z-[210] pointer-events-none"
+        className="absolute inset-0 z-[210] pointer-events-none will-change-[transform,opacity]"
         style={{ backgroundColor: specimen.hex }}
         initial={{ opacity: 1, scale: 1 }}
         animate={{ opacity: 0, scale: 1.5 }}
         transition={{ duration: 2.5, ease: "easeOut" }}
       />
 
-      {/* TOP LEFT BACK TO LANDING BUTTON */}
-      <div className="absolute top-12 left-12 z-50">
-        <button 
-          onClick={onClose} 
-          className="text-xl md:text-2xl font-light tracking-[0.4em] text-[#A80000] hover:text-[#ff3333] uppercase font-[var(--font-archivo)] transition-colors"
+      {/* TOP LEFT BACK TO LANDING BUTTON (z-[220] above smoke z-[210]) */}
+      <div className="absolute top-12 left-12 z-[220]">
+          <button 
+            onClick={onClose} 
+            className="min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            aria-label="Back to Scalar Home"
+            data-thermal-hover="true"
         >
           SCALAR
         </button>
@@ -40,10 +42,10 @@ export default function ShopScreen({ specimen, variant, onClose }: { specimen: S
           // SECURE_CHECKOUT_INITIALIZED
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] mb-2" style={{ color: specimen.hex }}>
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] mb-2" style={{ color: specimen.hex }}>
           {specimen.code}
         </h1>
-        <h2 className="text-lg md:text-xl text-white/50 tracking-[0.2em] font-mono uppercase mb-12">
+        <h2 className="text-base sm:text-lg md:text-xl text-white/50 tracking-[0.2em] font-mono uppercase mb-12">
           {specimen.chemicalName}
         </h2>
 
@@ -54,7 +56,7 @@ export default function ShopScreen({ specimen, variant, onClose }: { specimen: S
            </p>
         </div>
 
-        <button className="w-full py-6 border border-white/20 hover:border-[#A80000] hover:bg-[#A80000]/10 transition-all duration-300 group">
+        <button className="w-full min-h-[44px] py-6 border border-white/20 hover:border-[#A80000] hover:bg-[#A80000]/10 transition-all duration-300 group" aria-label="Proceed to Payment">
           <span className="text-[11px] tracking-[0.3em] font-mono text-white/70 group-hover:text-[#A80000] transition-colors">
             [ PROCEED_TO_PAYMENT ]
           </span>

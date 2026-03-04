@@ -5,9 +5,10 @@ import { cn } from '@/lib/utils'
 import SpecimenDetail from '@/components/SpecimenDetail'
 import ShopScreen from '@/components/ShopScreen' // Add this import
 
+const DECRYPT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+'
+
 function DecryptText({ text, isHovering, onComplete }: { text: string; isHovering: boolean; onComplete: () => void }) {
   const [displayText, setDisplayText] = useState(text)
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+'
   
   useEffect(() => {
     if (!isHovering) {
@@ -22,7 +23,7 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
         .map((letter, index) => {
           if (index < iterations) return text[index]
           if (letter === ' ') return ' '
-          return chars[Math.floor(Math.random() * chars.length)]
+          return DECRYPT_CHARS[Math.floor(Math.random() * DECRYPT_CHARS.length)]
         })
         .join('')
       )
@@ -36,7 +37,7 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
     }, 30) // Faster animation speed
 
     return () => clearInterval(interval)
-  }, [isHovering, text])
+  }, [isHovering, text, onComplete])
 
   return <>{displayText}</>
 }
@@ -138,7 +139,7 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
   )
 }
 
-export default function CollectionGrid({ category, onClose, onHoverColor, onGoToShop }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void, onGoToShop: (specimen: Specimen, variant: string) => void }) {
+export default function CollectionGrid({ category, onClose, onHoverColor }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void }) {
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
   const[hoveredHex, setHoveredHex] = useState<string | null>(null)
   
@@ -154,7 +155,7 @@ export default function CollectionGrid({ category, onClose, onHoverColor, onGoTo
 
   return (
     <motion.div 
-      className="fixed inset-0 z-[70] bg-[#030F08] w-full h-full overflow-y-auto overscroll-contain"
+      className="fixed inset-0 z-[70] bg-[#030F08] w-full h-full overflow-y-auto overscroll-contain touch-pan-y"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 30 }}
@@ -200,12 +201,13 @@ export default function CollectionGrid({ category, onClose, onHoverColor, onGoTo
   <button 
     data-thermal-hover="true"
     onClick={onClose} 
-    className="absolute left-0 top-1/2 -translate-y-1/2 text-xl md:text-2xl font-light tracking-[0.4em] text-[#A80000] hover:text-[#ff3333] uppercase font-[var(--font-archivo)] transition-colors"
+    className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+    aria-label="Back to Scalar Home"
   >
     SCALAR
   </button>
 
-          <h2 className="text-xl md:text-3xl font-light tracking-[0.4em] uppercase font-[var(--font-archivo)] text-[#FCFBF8] flex gap-4">
+          <h2 className="text-lg sm:text-xl md:text-3xl font-light tracking-[0.4em] uppercase font-[var(--font-archivo)] text-[#FCFBF8] flex gap-4">
             {category} <span className="text-[#A80000] drop-shadow-[0_0_12px_rgba(168,0,0,0.5)]">REGISTRY</span>
           </h2>
           
