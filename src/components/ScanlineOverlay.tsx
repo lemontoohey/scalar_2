@@ -6,8 +6,8 @@ export default function ScanlineOverlay() {
     <div className="fixed inset-0 pointer-events-none z-[9990] overflow-hidden">
       <motion.div
         className="w-full h-[2px] bg-white/[0.03] shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-        initial={{ top: '0%' }}
-        animate={{ top: '110%' }}
+        initial={{ top: '0%' } as React.CSSProperties}
+        animate={{ top: '110%' } as React.CSSProperties}
         transition={{
           duration: 4.6,
           delay: 0,

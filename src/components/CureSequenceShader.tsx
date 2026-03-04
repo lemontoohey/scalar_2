@@ -103,8 +103,8 @@ function InnerShader({
 }) {
   const meshRef = useRef<THREE.Mesh>(null)
   const { viewport } = useThree()
-  // React state removed for performance (pure uniform drive)
   const startTimeRef = useRef<number | null>(null)
+  const elapsedRef = useRef(0)
   const cureCompleteFired = useRef(false)
   const planeWidth = Math.max(viewport.width, 10)
   const planeHeight = Math.max(viewport.height, 10)
@@ -118,9 +118,10 @@ function InnerShader({
     []
   )
 
-  useFrame((state) => {
-    if (startTimeRef.current === null) startTimeRef.current = state.clock.elapsedTime
-    const elapsedMs = (state.clock.elapsedTime - startTimeRef.current) * 1000
+  useFrame((_state, delta) => {
+    if (startTimeRef.current === null) startTimeRef.current = 0
+    elapsedRef.current += delta
+    const elapsedMs = elapsedRef.current * 1000
     const rawProgress = Math.min(elapsedMs / DURATION_MS, 1)
 
     // Phase A (0–44%): sineOut expansion. Phase B (44–100%): exponentialIn recession.
@@ -142,7 +143,7 @@ function InnerShader({
     if (meshRef.current) {
       const material = meshRef.current.material as THREE.ShaderMaterial
       if (material.uniforms) {
-        material.uniforms.uTime.value = state.clock.elapsedTime
+        material.uniforms.uTime.value = elapsedRef.current
         material.uniforms.uProgress.value = eased
         material.uniforms.uSpeed.value = 0.1
       }

@@ -5,20 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 5173 --hostname 127.0.0.1",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@react-three/fiber": "^8.17.10",
+    "@react-three/fiber": "^10.0.0-alpha.2",
     "clsx": "^2.1.1",
     "eslint-config-next": "^16.1.6",
     "framer-motion": "^11.11.17",
     "next": "^16.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sucrase": "^3.35.1",
     "tailwind-merge": "^3.5.0",
-    "three": "^0.170.0"
+    "three": "^0.183.2"
   },
   "devDependencies": {
     "@types/estree": "^1.0.8",

@@ -183,7 +183,7 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
           background: hoveredHex 
             ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 70%)` 
             : 'transparent',
-        }}
+        } as React.CSSProperties}
       />
 
       <div className="relative z-10 w-full px-6 py-6 sm:px-12">

@@ -64,20 +64,18 @@ export default function Home() {
       <section className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none">
         <div className="text-center mt-[-8vh] pointer-events-auto z-10" style={{ textShadow: '0 0 40px rgba(168, 0, 0, 0.4)', transform: 'translateX(-1%)' }}>
           <motion.h1
-            className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.4em] text-[#FCFBF8]"
+            className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.4em] text-[#FCFBF8] font-[var(--font-archivo)]"
             initial={{ opacity: 0, filter: 'blur(20px)' }}
             animate={{ opacity: 1, filter: 'blur(0px)' }}
             transition={{ duration: 4.0, delay: 0.5, ease: 'easeOut' }}
-            style={{ fontFamily: 'var(--font-archivo)' }}
           >
             SCALAR
           </motion.h1>
           <motion.p
-            className="text-base sm:text-lg md:text-xl font-light tracking-[0.6em] lowercase text-[#FCFBF8]/80 mt-4"
+            className="text-base sm:text-lg md:text-xl font-light tracking-[0.6em] lowercase text-[#FCFBF8]/80 mt-4 font-[var(--font-archivo)]"
             initial={{ opacity: 0, filter: 'blur(10px)' }}
             animate={{ opacity: 1, filter: 'blur(0px)' }}
             transition={{ duration: 3.5, delay: 1.5, ease: 'easeOut' }}
-            style={{ fontFamily: 'var(--font-archivo)' }}
           >
             ordinance of depth
           </motion.p>
