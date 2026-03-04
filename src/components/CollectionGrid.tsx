@@ -31,7 +31,7 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
       }
 
       iterations += 1 
-    }, 20)
+    }, 40) // Slower animation speed (Task 5)
 
     return () => clearInterval(interval)
   }, [isHovering, text])
@@ -172,9 +172,9 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
       <div 
         className="fixed inset-0 z-0 transition-all duration-1000 pointer-events-none mix-blend-screen"
         style={{
-          opacity: hoveredHex ? 0.75 : 0, 
+          opacity: hoveredHex ? 0.85 : 0, // Increased opacity for stronger bloom
           background: hoveredHex 
-            ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 65%)` 
+            ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 70%)` // Wider spread
             : 'transparent',
         }}
       />
