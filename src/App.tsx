@@ -52,7 +52,7 @@ export default function App() {
 
   return (
     <main 
-      className="relative w-full h-screen overflow-hidden bg-black"
+      className="relative w-full h-screen overflow-hidden bg-black text-[#FCFBF8] selection:bg-red-900 selection:text-white"
       onClick={() => {
         // Init audio context on first click to unlock for future if autoplay failed
         if (!audioContextRef.current) {
