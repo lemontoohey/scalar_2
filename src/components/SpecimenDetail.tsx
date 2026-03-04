@@ -1,7 +1,14 @@
+'use client';
+
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
+import { getLumaOpacity } from './CollectionGrid'
+import MagneticText from './MagneticText'
+import { useResonance } from '@/hooks/useResonance'
 
 // --- ORGANIC APPARITION TEXT COMPONENT ---
 function ApparateText({ children, delay = 0, className, style }: { children: React.ReactNode, delay?: number, className?: string, style?: React.CSSProperties }) {
@@ -19,10 +26,14 @@ function ApparateText({ children, delay = 0, className, style }: { children: Rea
 }
 
 // --- MAIN COMPONENT ---
-export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { specimen: Specimen, onClose: () => void, onGoToShop: (specimen: Specimen, variant: string) => void }) {
+export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
+  const router = useRouter()
   const [phase, setPhase] = useState<'clearing' | 'idle' | 'flooding'>('clearing')
   const [selectedVariant, setSelectedVariant] = useState<'soup' | 'rothko' | null>(null)
   const [showTechStack, setShowTechStack] = useState(false)
+  
+  // Phase 4: Ultra-Luxury Feature 2 - Generative Resonance Soundscape
+  useResonance(specimen.hex, true)
 
   // Timeline Sequence
   useEffect(() => {
@@ -35,7 +46,8 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
     if (!selectedVariant) return
     setPhase('flooding')
     setTimeout(() => {
-      onGoToShop(specimen, selectedVariant)
+      // Navigate to shop with variant
+      router.push(`/shop/${specimen.code}?variant=${selectedVariant}`)
     }, 1500)
   }
 
@@ -73,8 +85,8 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
         className="absolute right-[-30vw] md:right-[-10vw] top-[5%] bottom-0 flex items-center pointer-events-none z-10 will-change-[transform,opacity]"
         initial={{ opacity: 0, scale: 1.5 }} // Apparates out of the smoke
         animate={
-          phase === 'flooding' ? { opacity: 1, scale: 20 } : 
-          { opacity: 1, scale: 1 }
+          phase === 'flooding' ? { opacity: getLumaOpacity(specimen.hex, 1), scale: 20 } : 
+          { opacity: getLumaOpacity(specimen.hex, 1), scale: 1 }
         }
         transition={{ duration: phase === 'flooding' ? 1.5 : 4.0, ease: "easeOut" }}
       >
@@ -97,18 +109,18 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
         {/* Top Nav */}
         <div className="flex justify-between items-start w-full">
           {/* White Scalar Back Button */}
-          <button 
-            onClick={onClose} 
+          <Link 
+            href={`/${specimen.category}`}
             className="min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
             aria-label={`Back to ${specimen.category} Registry`} 
             data-thermal-hover="true"
           >
             SCALAR
-          </button>
+          </Link>
           
           <button 
             onClick={() => setShowTechStack(!showTechStack)}
-            className="min-h-[44px] min-w-[44px] text-[11px] tracking-[0.3em] text-white/50 hover:text-white uppercase font-mono transition-colors border border-white/20 px-4 py-2 hover:bg-white/5"
+            className="min-h-[44px] min-w-[44px] text-[11px] tracking-[0.3em] text-white/50 uppercase font-mono transition-all duration-300 border border-white/20 px-4 py-2 hover:border-[#A80000] hover:text-[#A80000] hover:shadow-[0_0_15px_rgba(168,0,0,0.5)] hover:bg-[#A80000]/10"
             aria-label={showTechStack ? "Close System Architecture" : "View System Architecture"}
           >
             {showTechStack ? "[ CLOSE_ARCHITECTURE ]" : "[ VIEW_TECH_STACK ]"}
@@ -118,13 +130,13 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
         {/* Content Block (Replaced Typewriter with ApparateText) */}
         <div className="flex-1 flex flex-col justify-center max-w-xl mt-12">
           
+          {/* Phase 3: Ultra-Luxury Feature 1 - Magnetic Kinematic Typography */}
           <ApparateText delay={0.2} className="h-[80px] md:h-[110px]">
-            <span 
+            <MagneticText 
+              text={specimen.code} 
               className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] drop-shadow-2xl"
-              style={{ color: specimen.hex }} 
-            >
-              {specimen.code}
-            </span>
+              color={specimen.hex}
+            />
           </ApparateText>
 
           <ApparateText delay={0.4} className="h-[30px] mt-2">
@@ -185,13 +197,24 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
       {/* SLIDE-OUT TECH STACK OVERLAY (Moves Over Top of Mist, Pure Glass Effect) */}
       <AnimatePresence>
         {showTechStack && (
-          <motion.div 
-            initial={{ x: '100%', opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: '100%', opacity: 0 }}
-            transition={{ duration: 0.7, ease:[0.16, 1, 0.3, 1] }}
-            className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-[#020202]/10 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-[130] overflow-y-auto overscroll-contain touch-pan-y p-6 md:p-12 lg:p-20 will-change-[transform,opacity]"
-          >
+          <>
+            <motion.div
+              key="tech-stack-backdrop"
+              className="absolute inset-0 z-30 cursor-pointer"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowTechStack(false)}
+              aria-hidden="true"
+            />
+            <motion.div 
+              key="tech-stack-panel"
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '100%', opacity: 0 }}
+              transition={{ duration: 0.7, ease:[0.16, 1, 0.3, 1] }}
+              className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-[#020202]/10 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-40 overflow-y-auto overscroll-contain touch-pan-y p-6 md:p-12 lg:p-20 will-change-[transform,opacity]"
+            >
             <h3 className="text-2xl font-light tracking-[0.3em] text-white mb-12 uppercase font-[var(--font-archivo)] mt-12">
               System <span className="text-white/30">Architecture</span>
             </h3>
@@ -214,6 +237,7 @@ export default function SpecimenDetail({ specimen, onClose, onGoToShop }: { spec
               </div>
             </div>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.div>

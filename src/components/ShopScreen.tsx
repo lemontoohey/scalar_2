@@ -1,11 +1,17 @@
+'use client';
+
 import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Specimen } from '@/lib/specimens'
 
-export default function ShopScreen({ specimen, variant, onClose }: { specimen: Specimen, variant: string, onClose: () => void }) {
+export default function ShopScreen({ specimen }: { specimen: Specimen }) {
+  const searchParams = useSearchParams()
+  const variant = searchParams.get('variant') || 'soup' // Default to soup if not present
   
   return (
     <motion.div 
-      className="fixed inset-0 z-[200] bg-[#030F08] text-[#FCFBF8] overflow-hidden flex flex-col items-center justify-center overscroll-contain touch-pan-y" // Changed background to #030F08
+      className="fixed inset-0 z-[200] bg-[#030F08] text-[#FCFBF8] overflow-hidden flex flex-col items-center justify-center overscroll-contain touch-pan-y" 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -21,14 +27,14 @@ export default function ShopScreen({ specimen, variant, onClose }: { specimen: S
 
       {/* TOP LEFT BACK TO LANDING BUTTON (z-[220] above smoke z-[210]) */}
       <div className="absolute top-12 left-12 z-[220]">
-          <button 
-            onClick={onClose} 
+          <Link 
+            href={`/specimen/${specimen.code}`}
             className="min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
-            aria-label="Back to Scalar Home"
+            aria-label={`Back to ${specimen.code} Specimen`}
             data-thermal-hover="true"
         >
           SCALAR
-        </button>
+        </Link>
       </div>
 
       {/* SHOP CONTENT (Staggers in smoothly after smoke clears) */}

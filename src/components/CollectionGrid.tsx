@@ -1,11 +1,22 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { SPECIMEN_DATA, Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
-import SpecimenDetail from '@/components/SpecimenDetail'
-import ShopScreen from '@/components/ShopScreen' // Add this import
 
 const DECRYPT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+'
+
+export function getLumaOpacity(hex: string, baseOpacity: number): number {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b // ITU-R BT.709
+  const lumaNorm = luma / 255
+  const adjustment = Math.max(0.25, 1.2 - lumaNorm)
+  return baseOpacity * adjustment
+}
 
 function DecryptText({ text, isHovering, onComplete }: { text: string; isHovering: boolean; onComplete: () => void }) {
   const [displayText, setDisplayText] = useState(text)
@@ -60,99 +71,90 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
         setIsHovering(false)
         onLeave()
       }}
-      className="cursor-pointer" // Indicate clickability
     >
-      <div
-        className={cn(
-          "group relative h-64 p-6 border border-white/5",
-          "overflow-hidden transition-all duration-500",
-          "bg-transparent hover:bg-[#FCFBF8]/[0.03] hover:border-[#FCFBF8]/20 hover:backdrop-blur-sm"
-        )}
-        data-thermal-hover="true"
-      >
-        {/* Top Right: Category (Hidden unless hovered) */}
-        <div className={cn(
-          "absolute top-6 right-6 text-[9px] font-mono tracking-wider text-[#FCFBF8]/20 uppercase transition-opacity duration-500",
-          isHovering ? "opacity-100" : "opacity-0"
-        )}>
-          {specimen.category}
-        </div>
-
-        {/* Dynamic Color Code (Starts Centered -> Glides to Top Left) */}
-        <div 
+      <Link href={`/specimen/${specimen.code}`} className="block cursor-pointer">
+        <div
           className={cn(
-            "absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full",
-            isHovering 
-              ? "top-6 left-6 text-[11px] md:text-[13px] text-[#FCFBF8]/50 translate-x-0 translate-y-0 !w-auto" 
-              : "top-1/2 left-0 -translate-y-1/2 text-[14px] md:text-[18px] text-[#FCFBF8]/40 justify-center"
+            "group relative min-h-[24rem] md:min-h-[20rem] flex flex-col justify-between p-6 border border-white/5",
+            "overflow-hidden transition-all duration-500",
+            "bg-transparent hover:bg-[#FCFBF8]/[0.03] hover:border-[#FCFBF8]/20 hover:backdrop-blur-sm"
           )}
+          data-thermal-hover="true"
         >
-          {specimen.code}
-        </div>
-
-        {/* Scrambled Name (Reveals in Center) */}
-        <div className={cn(
-          "absolute inset-0 flex items-center justify-center px-6 text-center transition-opacity duration-500 delay-100",
-          isHovering ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}>
-          <h3 className="text-xl font-light tracking-wide text-[#FCFBF8]/90 font-[var(--font-archivo)] leading-snug">
-            <DecryptText 
-              text={specimen.name} 
-              isHovering={isHovering} 
-              onComplete={() => {}}
-            />
-          </h3>
-        </div>
-
-        {/* Bottom Prominent Color Bar & Hex (CAPILLARY ANIMATION) */}
-        <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-3">
-          <div className="w-full h-2 bg-[#FCFBF8]/5 relative overflow-hidden rounded-[1px]">
-            <div 
-              className="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-              style={{ 
-                width: isHovering ? '100%' : '4px', 
-                backgroundColor: specimen.hex,
-                boxShadow: isHovering ? `0 0 20px ${specimen.hex}A0` : 'none' 
-              }}
-            />
-          </div>
-          
+          {/* Top Right: Category (Hidden unless hovered) */}
           <div className={cn(
-            "flex justify-between items-center text-[10px] font-mono text-[#FCFBF8]/40 transition-opacity duration-500",
+            "absolute top-6 right-6 text-[9px] font-mono tracking-wider text-[#FCFBF8]/20 uppercase transition-opacity duration-500",
+            isHovering ? "opacity-100" : "opacity-0"
+          )}>
+            {specimen.category}
+          </div>
+
+          {/* Dynamic Color Code (Starts Centered -> Glides to Top Left) */}
+          <div 
+            className={cn(
+              "absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full",
+              isHovering 
+                ? "top-6 left-6 text-[11px] md:text-[13px] text-[#FCFBF8]/50 translate-x-0 translate-y-0 !w-auto" 
+                : "top-1/2 left-0 -translate-y-1/2 text-[14px] md:text-[18px] text-[#FCFBF8]/40 justify-center"
+            )}
+          >
+            {specimen.code}
+          </div>
+
+          {/* Scrambled Name (Reveals in Center) */}
+          <div className={cn(
+            "absolute inset-0 flex items-center justify-center px-6 text-center transition-opacity duration-500 delay-100",
             isHovering ? "opacity-100" : "opacity-0 pointer-events-none"
           )}>
-            <span>HEX_REF</span>
-            <span className="text-[#FCFBF8]/70">{specimen.hex}</span>
+            <h3 className="text-xl font-light tracking-wide text-[#FCFBF8]/90 font-[var(--font-archivo)] leading-snug break-words">
+              <DecryptText 
+                text={specimen.name} 
+                isHovering={isHovering} 
+                onComplete={() => {}}
+              />
+            </h3>
           </div>
-        </div>
 
-        {/* SCI-FI SCANNER LINE */}
-        <div 
-          className="absolute left-0 top-0 w-full h-[1px] opacity-0 group-hover:animate-scan z-20 pointer-events-none"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${specimen.hex}, transparent)`,
-            boxShadow: `0 0 8px ${specimen.hex}`
-          }}
-        />
-      </div>
+          {/* Bottom Prominent Color Bar & Hex (CAPILLARY ANIMATION) */}
+          <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-3">
+            <div className="w-full h-2 bg-[#FCFBF8]/5 relative overflow-hidden rounded-[1px]">
+              <div 
+                className="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                style={{ 
+                  width: isHovering ? '100%' : '4px', 
+                  backgroundColor: specimen.hex,
+                  boxShadow: isHovering ? `0 0 20px ${specimen.hex}A0` : 'none' 
+                }}
+              />
+            </div>
+            
+            <div className={cn(
+              "flex justify-between items-center text-[10px] font-mono text-[#FCFBF8]/40 transition-opacity duration-500",
+              isHovering ? "opacity-100" : "opacity-0 pointer-events-none"
+            )}>
+              <span>HEX_REF</span>
+              <span className="text-[#FCFBF8]/70">{specimen.hex}</span>
+            </div>
+          </div>
+
+          {/* SCI-FI SCANNER LINE */}
+          <div 
+            className="absolute left-0 top-0 w-full h-[1px] opacity-0 group-hover:animate-scan z-20 pointer-events-none"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${specimen.hex}, transparent)`,
+              boxShadow: `0 0 8px ${specimen.hex}`
+            }}
+          />
+        </div>
+      </Link>
     </motion.div>
   )
 }
 
-export default function CollectionGrid({ category, onClose, onHoverColor }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void }) {
+export default function CollectionGrid({ category }: { category: 'organic' | 'inorganic' }) {
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
   const[hoveredHex, setHoveredHex] = useState<string | null>(null)
   
-  const [selectedSpecimen, setSelectedSpecimen] = useState<Specimen | null>(null)
-  
-  // NEW: State for tracking if user is in checkout
-  const[shopData, setShopData] = useState<{specimen: Specimen, variant: string} | null>(null)
-
-  useEffect(() => {
-    onHoverColor(hoveredHex)
-    return () => onHoverColor(null)
-  }, [hoveredHex, onHoverColor])
-
   return (
     <motion.div 
       className="fixed inset-0 z-[70] bg-[#030F08] w-full h-full overflow-y-auto overscroll-contain touch-pan-y"
@@ -179,7 +181,7 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         className="fixed inset-0 z-0 transition-all duration-1000 pointer-events-none mix-blend-screen"
         animate={hoveredHex ? { 
           scale: [1, 1.15, 1],
-          opacity: [0.85, 0.65, 0.85],
+          opacity: (() => { const b = getLumaOpacity(hoveredHex, 0.75); return [b, b * 0.765, b] })(),
         } : {}}
         transition={{ 
           duration: 8, 
@@ -187,7 +189,7 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
           ease: "easeInOut" 
         }}
         style={{
-          opacity: hoveredHex ? 0.85 : 0, 
+          opacity: hoveredHex ? getLumaOpacity(hoveredHex, 0.75) : 0, 
           background: hoveredHex 
             ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 70%)` 
             : 'transparent',
@@ -196,27 +198,25 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
 
       <div className="relative z-10 w-full px-6 py-6 sm:px-12">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-8 pb-6 mb-16 border-b border-white/10 bg-[#040404]/90 backdrop-blur-xl flex items-center justify-center">
-  
-  <button 
-    data-thermal-hover="true"
-    onClick={onClose} 
-    className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
-    aria-label="Back to Scalar Home"
-  >
-    SCALAR
-  </button>
-
-          <h2 className="text-lg sm:text-xl md:text-3xl font-light tracking-[0.4em] uppercase font-[var(--font-archivo)] text-[#FCFBF8] flex gap-4">
-            {category} <span className="text-[#A80000] drop-shadow-[0_0_12px_rgba(168,0,0,0.5)]">REGISTRY</span>
+        <div className="sticky top-0 z-50 pt-12 pb-10 mb-16 border-b border-white/[0.05] bg-[#040404]/10 backdrop-blur-2xl flex items-center justify-center">
+          <Link 
+            href="/"
+            data-thermal-hover="true"
+            className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            aria-label="Back to Scalar Home"
+          >
+            SCALAR
+          </Link>
+          <h2 className="text-xl md:text-3xl font-light tracking-[0.4em] uppercase font-[var(--font-archivo)] flex gap-4">
+            <span className="text-[#A80000] drop-shadow-[0_0_12px_rgba(168,0,0,0.3)]">{category}</span>
+            <span className="text-[#FCFBF8]/40">REGISTRY</span>
           </h2>
-          
         </div>
 
         {/* SPECIMEN GRID */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-24">
           {dataset.map((specimen, idx) => (
-             <div key={specimen.id} onClick={() => setSelectedSpecimen(specimen)}>
+             <div key={specimen.id}>
                <Card 
                  specimen={specimen} 
                  idx={idx} 
@@ -227,31 +227,6 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
           ))}
         </div>
       </div>
-
-      <AnimatePresence>
-         {/* Render Specimen Detail */}
-         {selectedSpecimen && !shopData && (
-           <SpecimenDetail 
-             specimen={selectedSpecimen} 
-             onClose={() => setSelectedSpecimen(null)} 
-             onGoToShop={(specimen, variant) => setShopData({specimen, variant})} // New prop handler
-           />
-         )}
-
-         {/* Render Shop Screen (Triggers after the smoke floods screen) */}
-         {shopData && (
-           <ShopScreen 
-             specimen={shopData.specimen} 
-             variant={shopData.variant} 
-             onClose={() => {
-                // Returns user directly to the Landing screen
-                setShopData(null)
-                setSelectedSpecimen(null)
-                onClose() // Calls CollectionGrid's onClose, which in App.tsx sets view to 'home'
-             }} 
-           />
-         )}
-       </AnimatePresence>
     </motion.div>
   )
 }

@@ -8,7 +8,8 @@ export default function ScanlineOverlay() {
         initial={{ top: '0%' }}
         animate={{ top: '110%' }}
         transition={{
-          duration: 12,
+          duration: 4.6,
+          delay: 0,
           ease: 'linear',
           repeat: Infinity,
           repeatDelay: 0
