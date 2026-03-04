@@ -8,6 +8,7 @@ import ThermalCursor from '@/components/ThermalCursor'
 export default function App() {
   const [showButtons, setShowButtons] = useState(false)
   const [activeCategory, setActiveCategory] = useState<'organic' | 'inorganic' | null>(null)
+  const [hoveredColor, setHoveredColor] = useState<string | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
 
   const playSubBass = () => {
@@ -61,7 +62,7 @@ export default function App() {
         }
       }}
     >
-      <ThermalCursor />
+      <ThermalCursor hoverColor={hoveredColor} />
       <ScanlineOverlay />
       
       {/* Z-0: Ambient Backglow */}
@@ -127,7 +128,11 @@ export default function App() {
       {/* Z-70: Collection Grid Overlay */}
       <AnimatePresence>
         {activeCategory && (
-          <CollectionGrid category={activeCategory} onClose={() => setActiveCategory(null)} />
+          <CollectionGrid 
+            category={activeCategory} 
+            onClose={() => { setActiveCategory(null); setHoveredColor(null); }}
+            onHoverColor={setHoveredColor}
+          />
         )}
       </AnimatePresence>
     </main>

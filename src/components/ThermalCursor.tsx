@@ -9,7 +9,7 @@ function useIsTouchDevice() {
   return isTouch
 }
 
-export default function ThermalCursor() {
+export default function ThermalCursor({ hoverColor }: { hoverColor?: string | null }) {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 })
   const [isHovering, setIsHovering] = useState(false)
   const isTouch = useIsTouchDevice()
@@ -35,6 +35,12 @@ export default function ThermalCursor() {
 
   if (isTouch) return null
 
+  // Determine active color (default red or passed hex)
+  // Use a slight transparency for the bloom
+  const activeBloom = hoverColor 
+    ? `radial-gradient(circle, ${hoverColor}99 0%, ${hoverColor}00 70%)` // 99 is ~60% alpha
+    : 'radial-gradient(circle, rgba(168,0,0,0.7) 0%, rgba(168,0,0,0) 70%)'
+
   return (
     <motion.div
       className="fixed top-0 left-0 pointer-events-none z-[9999]"
@@ -45,10 +51,10 @@ export default function ThermalCursor() {
         className="absolute top-0 left-0 rounded-full"
         style={{ x: '-50%', y: '-50%' }}
         initial={false}
-        animate={isHovering ? {
-          width: 80, height: 80, // Reduced from 120
-          background: 'radial-gradient(circle, rgba(168,0,0,0.7) 0%, rgba(168,0,0,0) 70%)',
-          mixBlendMode: 'screen',
+        animate={isHovering || hoverColor ? {
+          width: 80, height: 80,
+          background: activeBloom,
+          mixBlendMode: hoverColor ? 'normal' : 'screen', // Normal for opaque colors usually looks better if they are bright
         } : {
           width: 8, height: 8,
           background: 'radial-gradient(circle, rgba(252,251,248,0.9) 0%, rgba(252,251,248,0) 70%)',
