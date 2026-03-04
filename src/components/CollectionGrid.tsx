@@ -135,6 +135,8 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
   )
 }
 
+import SmokeFluidShader from './SmokeFluidShader'
+
 export default function CollectionGrid({ category, onClose, onHoverColor }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void }) {
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
   const [hoveredHex, setHoveredHex] = useState<string | null>(null)
@@ -168,16 +170,10 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         }
       `}</style>
 
-      {/* AMBIENT BACKGROUND BLOOM (Stronger for transparent cards) */}
-      <div 
-        className="fixed inset-0 z-0 transition-all duration-1000 pointer-events-none mix-blend-screen"
-        style={{
-          opacity: hoveredHex ? 0.85 : 0, // Increased opacity for stronger bloom
-          background: hoveredHex 
-            ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 70%)` // Wider spread
-            : 'transparent',
-        }}
-      />
+      {/* AMBIENT BACKGROUND SMOKE FLUID */}
+      <div className="fixed inset-0 z-0 pointer-events-none mix-blend-screen opacity-90">
+        <SmokeFluidShader color={hoveredHex} />
+      </div>
 
       {/* FLUID FLOATING GRID LINES */}
       <div 
