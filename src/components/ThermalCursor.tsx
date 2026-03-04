@@ -1,5 +1,3 @@
-'use client'
-
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
@@ -20,8 +18,10 @@ export default function ThermalCursor() {
     const handleMouseMove = (e: MouseEvent) => setMousePosition({ x: e.clientX, y: e.clientY })
     const handleMouseOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement
-      const active = t.tagName === 'BUTTON' || t.tagName === 'A' || t.tagName === 'H1' || t.tagName === 'P' ||
-                     !!t.closest('button') || t.hasAttribute('data-thermal-hover')
+      // Only react to interactive elements
+      const active = t.tagName === 'BUTTON' || t.tagName === 'A' || 
+                     !!t.closest('button') || !!t.closest('a') || 
+                     t.hasAttribute('data-thermal-hover')
       setIsHovering(active)
     }
 
@@ -46,7 +46,7 @@ export default function ThermalCursor() {
         style={{ x: '-50%', y: '-50%' }}
         initial={false}
         animate={isHovering ? {
-          width: 120, height: 120,
+          width: 80, height: 80, // Reduced from 120
           background: 'radial-gradient(circle, rgba(168,0,0,0.7) 0%, rgba(168,0,0,0) 70%)',
           mixBlendMode: 'screen',
         } : {
