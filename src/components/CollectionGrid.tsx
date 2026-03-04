@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { SPECIMEN_DATA, Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
 
@@ -40,7 +40,7 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
 }
 
 function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: number, onHover: (color: string) => void, onLeave: () => void }) {
-  const[isHovering, setIsHovering] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
 
   return (
@@ -60,9 +60,9 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
     >
       <div
         className={cn(
-          "group relative h-64 p-6 border border-white/5 bg-[#080808]",
+          "group relative h-64 p-6 border border-white/5",
           "overflow-hidden transition-all duration-500",
-          "hover:bg-[#111111] hover:border-white/20"
+          "bg-transparent hover:bg-white/[0.03] hover:border-white/20 hover:backdrop-blur-sm"
         )}
         data-thermal-hover="true"
       >
@@ -77,10 +77,10 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
         {/* Dynamic Color Code (Starts Centered -> Glides to Top Left) */}
         <div 
           className={cn(
-            "absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-widest pointer-events-none",
+            "absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full",
             isHovering 
-              ? "top-6 left-6 text-xs text-white/50 translate-x-0 translate-y-0" 
-              : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-[80%] text-3xl text-white/80"
+              ? "top-6 left-6 text-[11px] md:text-[13px] text-white/50 translate-x-0 translate-y-0 !w-auto" 
+              : "top-1/2 left-0 -translate-y-1/2 text-[14px] md:text-[18px] text-white/40 justify-center"
           )}
         >
           {specimen.code}
@@ -100,28 +100,31 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
           </h3>
         </div>
 
-        {/* Bottom Prominent Color Bar & Hex */}
+        {/* Bottom Prominent Color Bar & Hex (CAPILLARY ANIMATION) */}
         <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-3">
-          <div 
-            className="w-full h-3 rounded-[1px] transition-transform duration-500 group-hover:scale-y-[1.2] origin-bottom"
-            style={{ 
-              backgroundColor: specimen.hex,
-              boxShadow: `0 0 15px ${specimen.hex}90` // 90 is hex alpha for ~56% opacity
-            }}
-          />
+          <div className="w-full h-2 bg-white/5 relative overflow-hidden rounded-[1px]">
+            <div 
+              className="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              style={{ 
+                width: isHovering ? '100%' : '4px', // Capillary action: starts as a dot, shoots outward
+                backgroundColor: specimen.hex,
+                boxShadow: isHovering ? `0 0 20px ${specimen.hex}A0` : 'none' 
+              }}
+            />
+          </div>
           
           <div className={cn(
             "flex justify-between items-center text-[10px] font-mono text-white/40 transition-opacity duration-500",
             isHovering ? "opacity-100" : "opacity-0 pointer-events-none"
           )}>
-            <span>HEX</span>
+            <span>HEX_REF</span>
             <span className="text-white/70">{specimen.hex}</span>
           </div>
         </div>
 
         {/* SCI-FI SCANNER LINE */}
         <div 
-          className="absolute left-0 top-0 w-full h-[1px] opacity-0 group-hover:animate-scan z-20"
+          className="absolute left-0 top-0 w-full h-[1px] opacity-0 group-hover:animate-scan z-20 pointer-events-none"
           style={{
             background: `linear-gradient(90deg, transparent, ${specimen.hex}, transparent)`,
             boxShadow: `0 0 8px ${specimen.hex}`
@@ -136,11 +139,10 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
   const [hoveredHex, setHoveredHex] = useState<string | null>(null)
 
-  // Sync internal state to App.tsx cursor
   useEffect(() => {
     onHoverColor(hoveredHex)
     return () => onHoverColor(null)
-  },[hoveredHex, onHoverColor])
+  }, [hoveredHex, onHoverColor])
 
   return (
     <motion.div 
@@ -150,7 +152,6 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
       exit={{ opacity: 0, y: 30 }}
       transition={{ duration: 0.6, ease:[0.16, 1, 0.3, 1] }}
     >
-      {/* CSS For Fluid Background Lines */}
       <style>{`
         @keyframes driftLines {
           0% { transform: translate(0, 0); }
@@ -167,11 +168,11 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         }
       `}</style>
 
-      {/* AMBIENT BACKGROUND BLOOM */}
+      {/* AMBIENT BACKGROUND BLOOM (Stronger for transparent cards) */}
       <div 
-        className="fixed inset-0 z-0 transition-all duration-700 pointer-events-none mix-blend-screen"
+        className="fixed inset-0 z-0 transition-all duration-1000 pointer-events-none mix-blend-screen"
         style={{
-          opacity: hoveredHex ? 0.6 : 0, // Stronger bloom
+          opacity: hoveredHex ? 0.75 : 0, 
           background: hoveredHex 
             ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 65%)` 
             : 'transparent',
@@ -191,23 +192,26 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 sm:px-12">
+      <div className="relative z-10 w-full px-6 py-6 sm:px-12">
         {/* TOP NAVIGATION */}
-        <div className="flex justify-between items-end mb-16 border-b border-[#FCFBF8]/10 pb-6 pt-4 sticky top-0 bg-[#040404]/80 backdrop-blur-md z-50">
+        <div className="sticky top-0 z-50 pt-8 pb-6 mb-16 border-b border-white/10 bg-[#040404]/90 backdrop-blur-xl flex items-center justify-center">
+          
           <button 
             data-thermal-hover="true"
             onClick={onClose} 
-            className="text-2xl md:text-3xl font-light tracking-[0.4em] text-[#FCFBF8] hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            className="absolute left-0 top-1/2 -translate-y-1/2 text-[10px] md:text-[11px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors"
           >
-            SCALAR
+            [ ← SCALAR ]
           </button>
-          <span className="text-[10px] tracking-widest text-[#FCFBF8]/30 uppercase font-mono pb-1">
-            [ {category}_REGISTRY ]
-          </span>
+
+          <h2 className="text-xl md:text-3xl font-light tracking-[0.4em] uppercase font-[var(--font-archivo)] text-[#FCFBF8] flex gap-4">
+            {category} <span className="text-[#A80000] drop-shadow-[0_0_12px_rgba(168,0,0,0.5)]">REGISTRY</span>
+          </h2>
+          
         </div>
 
         {/* SPECIMEN GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-24">
           {dataset.map((specimen, idx) => (
              <Card 
                key={specimen.id} 
