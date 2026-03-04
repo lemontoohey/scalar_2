@@ -7,14 +7,13 @@ export function generateStaticParams() {
   }))
 }
 
-export default function SpecimenPage({ params }: { params: { code: string } }) {
-  const specimen = SPECIMEN_DATA.find((s) => s.code === params.code)
+export default async function SpecimenPage({ params }: { params: Promise<{ code: string }> }) {
+  const resolvedParams = await params;
+  const specimen = SPECIMEN_DATA.find((s) => s.code === resolvedParams.code)
 
   if (!specimen) {
     return <div>Specimen not found</div>
   }
 
-  return (
-    <SpecimenDetail specimen={specimen} />
-  )
+  return <SpecimenDetail specimen={specimen} />
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Archivo, Archivo_Narrow } from 'next/font/google'
 import './globals.css'
-import ScanlineOverlay from '@/components/ScanlineOverlay'
 import ThermalCursor from '@/components/ThermalCursor'
 
 const archivo = Archivo({ 
@@ -38,7 +37,6 @@ export default function RootLayout({
           </filter>
         </svg>
 
-        <ScanlineOverlay />
         <ThermalCursor />
         {children}
       </body>

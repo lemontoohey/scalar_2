@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import ScanlineOverlay from '@/components/ScanlineOverlay'
 
 const CureSequenceShader = dynamic(() => import('@/components/CureSequenceShader'), { ssr: false })
 
@@ -60,6 +61,8 @@ export default function Home() {
       <div className="absolute inset-0 z-10 pointer-events-none opacity-80 mix-blend-screen" style={{ transform: 'translateZ(0)' }}>
         <CureSequenceShader />
       </div>
+
+      <ScanlineOverlay />
 
       <section className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none">
         <div className="text-center mt-[-8vh] pointer-events-auto z-10" style={{ textShadow: '0 0 40px rgba(168, 0, 0, 0.4)', transform: 'translateX(-1%)' }}>

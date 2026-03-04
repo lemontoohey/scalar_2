@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    transpilePackages: ['three', '@react-three/fiber'],
-}
+  reactStrictMode: true,
+  // We explicitly transpile three.js to prevent "WebGLCubeRenderTarget" import errors
+  transpilePackages: ['three', '@react-three/fiber'],
+};
 
-export default nextConfig
+export default nextConfig;
