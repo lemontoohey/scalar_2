@@ -31,7 +31,7 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
       }
 
       iterations += 1 
-    }, 40) // Slower animation speed (Task 5)
+    }, 30) // Faster animation speed
 
     return () => clearInterval(interval)
   }, [isHovering, text])
@@ -135,8 +135,6 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
   )
 }
 
-import SmokeFluidShader from './SmokeFluidShader'
-
 export default function CollectionGrid({ category, onClose, onHoverColor }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void }) {
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
   const [hoveredHex, setHoveredHex] = useState<string | null>(null)
@@ -170,10 +168,25 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         }
       `}</style>
 
-      {/* AMBIENT BACKGROUND SMOKE FLUID */}
-      <div className="fixed inset-0 z-0 pointer-events-none mix-blend-screen opacity-90">
-        <SmokeFluidShader color={hoveredHex} />
-      </div>
+      {/* AMBIENT BACKGROUND BLOOM (Gentle Smoke Pulse) */}
+      <motion.div 
+        className="fixed inset-0 z-0 transition-all duration-1000 pointer-events-none mix-blend-screen"
+        animate={hoveredHex ? { 
+          scale: [1, 1.15, 1],
+          opacity: [0.85, 0.65, 0.85],
+        } : {}}
+        transition={{ 
+          duration: 8, 
+          repeat: Infinity, 
+          ease: "easeInOut" 
+        }}
+        style={{
+          opacity: hoveredHex ? 0.85 : 0, 
+          background: hoveredHex 
+            ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 70%)` 
+            : 'transparent',
+        }}
+      />
 
       {/* FLUID FLOATING GRID LINES */}
       <div 
