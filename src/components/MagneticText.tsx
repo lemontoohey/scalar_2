@@ -25,7 +25,7 @@ export default function MagneticText({ text, className, color }: { text: string,
           key={i}
           animate={{ x: mousePos.x * 0.1, y: mousePos.y * 0.1, rotateZ: mousePos.x * 0.05 }}
           transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.5 }}
-          className="inline-block"
+          className="inline-block whitespace-pre"
         >
           {char}
         </motion.span>

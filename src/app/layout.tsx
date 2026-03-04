@@ -3,7 +3,6 @@ import { Archivo, Archivo_Narrow } from 'next/font/google'
 import './globals.css'
 import ScanlineOverlay from '@/components/ScanlineOverlay'
 import ThermalCursor from '@/components/ThermalCursor'
-import PageTransition from '@/components/PageTransition' // Will create this
 
 const archivo = Archivo({ 
   subsets: ['latin'],
@@ -41,8 +40,7 @@ export default function RootLayout({
 
         <ScanlineOverlay />
         <ThermalCursor />
-        
-        <PageTransition>{children}</PageTransition>
+        {children}
       </body>
     </html>
   )
