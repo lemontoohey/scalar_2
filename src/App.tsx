@@ -49,7 +49,7 @@ export default function App() {
 
   return (
     <main 
-      className="relative w-full h-screen overflow-hidden bg-black text-[#FCFBF8] selection:bg-red-900 selection:text-white"
+      className="relative w-full h-screen overflow-hidden bg-[#030F08] text-[#FCFBF8] selection:bg-red-900 selection:text-white"
       onClick={() => {
         if (!audioContextRef.current) {
           audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -60,7 +60,7 @@ export default function App() {
       <ThermalCursor hoverColor={hoveredColor} />
       <ScanlineOverlay />
       
-      <div className="absolute inset-0 z-0 opacity-60 pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(74,0,0,0.5)_0%,rgba(31,5,16,0.3)_40%,transparent_80%)]" />
+      <div className="absolute inset-0 z-0 opacity-80 pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(74,0,0,0.7)_0%,rgba(31,5,16,0.3)_40%,transparent_80%)]" />
 
       <div className="absolute inset-0 z-10 pointer-events-none opacity-80 mix-blend-screen" style={{ transform: 'translateZ(0)' }}>
         <CureSequenceShader />

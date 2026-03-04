@@ -76,7 +76,7 @@ export default function SpecimenDetail({ specimen, onClose }: { specimen: Specim
 
   return (
     <motion.div 
-      className="fixed inset-0 z-[100] bg-[#020202] text-[#FCFBF8] overflow-hidden"
+      className="fixed inset-0 z-[100] bg-[#030F08] text-[#FCFBF8] overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.5 } }}

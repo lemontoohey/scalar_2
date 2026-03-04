@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { SPECIMEN_DATA, Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
+import SpecimenDetail from '@/components/SpecimenDetail'
 
 function DecryptText({ text, isHovering, onComplete }: { text: string; isHovering: boolean; onComplete: () => void }) {
   const [displayText, setDisplayText] = useState(text)
@@ -57,18 +58,19 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
         setIsHovering(false)
         onLeave()
       }}
+      className="cursor-pointer" // Indicate clickability
     >
       <div
         className={cn(
           "group relative h-64 p-6 border border-white/5",
           "overflow-hidden transition-all duration-500",
-          "bg-transparent hover:bg-white/[0.03] hover:border-white/20 hover:backdrop-blur-sm"
+          "bg-transparent hover:bg-[#FCFBF8]/[0.03] hover:border-[#FCFBF8]/20 hover:backdrop-blur-sm"
         )}
         data-thermal-hover="true"
       >
         {/* Top Right: Category (Hidden unless hovered) */}
         <div className={cn(
-          "absolute top-6 right-6 text-[9px] font-mono tracking-wider text-white/20 uppercase transition-opacity duration-500",
+          "absolute top-6 right-6 text-[9px] font-mono tracking-wider text-[#FCFBF8]/20 uppercase transition-opacity duration-500",
           isHovering ? "opacity-100" : "opacity-0"
         )}>
           {specimen.category}
@@ -79,8 +81,8 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
           className={cn(
             "absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full",
             isHovering 
-              ? "top-6 left-6 text-[11px] md:text-[13px] text-white/50 translate-x-0 translate-y-0 !w-auto" 
-              : "top-1/2 left-0 -translate-y-1/2 text-[14px] md:text-[18px] text-white/40 justify-center"
+              ? "top-6 left-6 text-[11px] md:text-[13px] text-[#FCFBF8]/50 translate-x-0 translate-y-0 !w-auto" 
+              : "top-1/2 left-0 -translate-y-1/2 text-[14px] md:text-[18px] text-[#FCFBF8]/40 justify-center"
           )}
         >
           {specimen.code}
@@ -91,7 +93,7 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
           "absolute inset-0 flex items-center justify-center px-6 text-center transition-opacity duration-500 delay-100",
           isHovering ? "opacity-100" : "opacity-0 pointer-events-none"
         )}>
-          <h3 className="text-xl font-light tracking-wide text-white/90 font-[var(--font-archivo)] leading-snug">
+          <h3 className="text-xl font-light tracking-wide text-[#FCFBF8]/90 font-[var(--font-archivo)] leading-snug">
             <DecryptText 
               text={specimen.name} 
               isHovering={isHovering} 
@@ -102,11 +104,11 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
 
         {/* Bottom Prominent Color Bar & Hex (CAPILLARY ANIMATION) */}
         <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-3">
-          <div className="w-full h-2 bg-white/5 relative overflow-hidden rounded-[1px]">
+          <div className="w-full h-2 bg-[#FCFBF8]/5 relative overflow-hidden rounded-[1px]">
             <div 
               className="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
               style={{ 
-                width: isHovering ? '100%' : '4px', // Capillary action: starts as a dot, shoots outward
+                width: isHovering ? '100%' : '4px', 
                 backgroundColor: specimen.hex,
                 boxShadow: isHovering ? `0 0 20px ${specimen.hex}A0` : 'none' 
               }}
@@ -114,11 +116,11 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
           </div>
           
           <div className={cn(
-            "flex justify-between items-center text-[10px] font-mono text-white/40 transition-opacity duration-500",
+            "flex justify-between items-center text-[10px] font-mono text-[#FCFBF8]/40 transition-opacity duration-500",
             isHovering ? "opacity-100" : "opacity-0 pointer-events-none"
           )}>
             <span>HEX_REF</span>
-            <span className="text-white/70">{specimen.hex}</span>
+            <span className="text-[#FCFBF8]/70">{specimen.hex}</span>
           </div>
         </div>
 
@@ -138,6 +140,7 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
 export default function CollectionGrid({ category, onClose, onHoverColor }: { category: 'organic' | 'inorganic', onClose: () => void, onHoverColor: (color: string | null) => void }) {
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
   const [hoveredHex, setHoveredHex] = useState<string | null>(null)
+  const [selectedSpecimen, setSelectedSpecimen] = useState<Specimen | null>(null)
 
   useEffect(() => {
     onHoverColor(hoveredHex)
@@ -146,17 +149,14 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
 
   return (
     <motion.div 
-      className="fixed inset-0 z-[70] bg-[#040404] w-full h-full overflow-y-auto overscroll-contain"
+      className="fixed inset-0 z-[70] bg-[#030F08] w-full h-full overflow-y-auto overscroll-contain"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 30 }}
       transition={{ duration: 0.6, ease:[0.16, 1, 0.3, 1] }}
     >
+      {/* CSS Styles */}
       <style>{`
-        @keyframes driftLines {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(-100px, -100px); }
-        }
         .animate-scan {
           animation: scan 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
@@ -188,27 +188,14 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         }}
       />
 
-      {/* FLUID FLOATING GRID LINES */}
-      <div 
-        className="fixed -inset-[100px] z-0 opacity-[0.04] pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #ffffff 1px, transparent 1px),
-            linear-gradient(to bottom, #ffffff 1px, transparent 1px)
-          `,
-          backgroundSize: '100px 100px',
-          animation: 'driftLines 20s linear infinite'
-        }}
-      />
-
       <div className="relative z-10 w-full px-6 py-6 sm:px-12">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-8 pb-6 mb-16 border-b border-white/10 bg-[#040404]/90 backdrop-blur-xl flex items-center justify-center">
+        <div className="sticky top-0 z-50 pt-8 pb-6 mb-16 border-b border-[#FCFBF8]/10 bg-[#030F08]/90 backdrop-blur-xl flex items-center justify-center">
           
           <button 
             data-thermal-hover="true"
             onClick={onClose} 
-            className="absolute left-0 top-1/2 -translate-y-1/2 text-[10px] md:text-[11px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors"
+            className="absolute left-0 top-1/2 -translate-y-1/2 text-[10px] md:text-[11px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-[#FCFBF8] uppercase font-mono transition-colors"
           >
             [ ← SCALAR ]
           </button>
@@ -222,16 +209,27 @@ export default function CollectionGrid({ category, onClose, onHoverColor }: { ca
         {/* SPECIMEN GRID */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-24">
           {dataset.map((specimen, idx) => (
-             <Card 
-               key={specimen.id} 
-               specimen={specimen} 
-               idx={idx} 
-               onHover={setHoveredHex}
-               onLeave={() => setHoveredHex(null)}
-             />
+             <div key={specimen.id} onClick={() => setSelectedSpecimen(specimen)}>
+               <Card 
+                 specimen={specimen} 
+                 idx={idx} 
+                 onHover={setHoveredHex}
+                 onLeave={() => setHoveredHex(null)}
+               />
+             </div>
           ))}
         </div>
       </div>
+
+      {/* DETAIL PAGE OVERLAY */}
+      <AnimatePresence>
+        {selectedSpecimen && (
+          <SpecimenDetail 
+            specimen={selectedSpecimen} 
+            onClose={() => setSelectedSpecimen(null)} 
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
