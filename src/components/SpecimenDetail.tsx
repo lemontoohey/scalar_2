@@ -137,39 +137,34 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
           {/* Automotive Rim Lighting - Specular highlights dancing on 3D edges */}
           <ApparateText delay={0.2} className="h-[80px] md:h-[110px] flex items-center">
             <style>{`
-              @keyframes rimDance {
-                0%, 100% { 
-                  text-shadow: 
-                    0.5px 0.5px 0.5px rgba(255,255,255,0.4),
-                    -0.5px -0.5px 0.5px rgba(0,0,0,0.4),
-                    0 0 20px ${specimen.hex}30;
-                }
-                33% { 
-                  text-shadow: 
-                    1px 0.5px 1.5px rgba(255,255,255,0.7),
-                    -0.5px -0.5px 0.5px rgba(0,0,0,0.5),
-                    0 0 30px ${specimen.hex}40;
-                }
-                66% { 
-                  text-shadow: 
-                    0.5px 1px 2px rgba(255,255,255,0.5),
-                    -0.8px -0.8px 1px rgba(255,255,255,0.2),
-                    0 0 25px ${specimen.hex}35;
-                }
+              @keyframes nebulaFlow {
+                0% { background-position: 0% 50%; filter: drop-shadow(0 0 15px ${specimen.hex}40); }
+                50% { background-position: 100% 50%; filter: drop-shadow(0 0 40px ${specimen.hex}80); }
+                100% { background-position: 0% 50%; filter: drop-shadow(0 0 15px ${specimen.hex}40); }
               }
-              @keyframes float3D {
-                0%, 100% { transform: perspective(1000px) rotateX(4deg) rotateY(-4deg) translateY(0px); }
-                50% { transform: perspective(1000px) rotateX(6deg) rotateY(-6deg) translateY(-10px); }
+              @keyframes slowTilt {
+                0% { transform: perspective(1000px) rotateX(2deg) rotateY(-2deg); }
+                50% { transform: perspective(1000px) rotateX(4deg) rotateY(-4deg); }
+                100% { transform: perspective(1000px) rotateX(2deg) rotateY(-2deg); }
               }
             `}</style>
             <span 
-              className="text-6xl sm:text-8xl md:text-[11rem] font-light tracking-[0.15em] uppercase font-[var(--font-archivo)] will-change-transform"
+              className="text-6xl sm:text-8xl md:text-[11rem] font-light tracking-[0.15em] uppercase font-[var(--font-archivo)] will-change-[transform,filter,background-position]"
               style={{ 
-                color: specimen.hex,
-                animation: 'rimDance 5s ease-in-out infinite, float3D 8s ease-in-out infinite',
-                filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.6))',
+                color: 'transparent',
+                // 3 Layers: White Edge sheen, Pigment Color, and a Noise texture
+                backgroundImage: `
+                  linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 25%, rgba(255,255,255,0) 75%, rgba(255,255,255,0.4) 100%),
+                  url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.25'/%3E%3C/svg%3E"),
+                  linear-gradient(to right, ${specimen.hex}, ${specimen.hex})
+                `,
+                backgroundSize: '200% 200%, 100% 100%, 100% 100%',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                animation: 'nebulaFlow 15s ease-in-out infinite, slowTilt 10s ease-in-out infinite',
                 transformStyle: 'preserve-3d',
-                WebkitFontSmoothing: 'antialiased',
+                // Make it look etched
+                WebkitTextStroke: `1px ${specimen.hex}80`,
               }} 
             >
               {specimen.code}

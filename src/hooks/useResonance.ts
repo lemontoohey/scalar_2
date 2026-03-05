@@ -101,7 +101,7 @@ export function useResonance(hexColor: string, isActive: boolean) {
         activeOscillators.current = [leftSub, rightSub, textureOsc, breathOsc, lfo, breathConstant];
       }
 
-      if (audioCtx.current.state === 'suspended') {
+      if (audioCtx.current?.state === 'suspended') {
         audioCtx.current.resume();
       }
 
