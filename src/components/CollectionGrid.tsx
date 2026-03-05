@@ -65,11 +65,7 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
     >
       <Link href={`/specimen/${specimen.code}`} className="block cursor-pointer">
         <div
-          className={cn(
-            "group relative min-h-[24rem] md:min-h-[20rem] flex flex-col justify-between p-6 border border-white/5",
-            "overflow-hidden transition-all duration-500",
-            "bg-transparent hover:bg-[#FCFBF8]/[0.03] hover:border-[#FCFBF8]/20 hover:backdrop-blur-sm"
-          )}
+          className="group relative min-h-[22rem] flex flex-col justify-between p-6 border border-white/5 bg-transparent overflow-hidden transition-all duration-500 hover:bg-[#FCFBF8]/[0.03] hover:border-[#FCFBF8]/20 hover:backdrop-blur-sm"
           data-thermal-hover="true"
         >
           {/* Top Right: Category (Hidden unless hovered) */}
@@ -80,13 +76,13 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
             {specimen.category}
           </div>
 
-          {/* Dynamic Color Code (Starts Centered -> Glides to Top Left) */}
+          {/* Dynamic Color Code: Reserved top on mobile, gliding absolute on desktop */}
           <div 
             className={cn(
-              "absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full",
+              "relative md:absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full mb-4 md:mb-0",
               isHovering 
-                ? "top-6 left-6 text-[11px] md:text-[13px] text-[#FCFBF8]/50 translate-x-0 translate-y-0 !w-auto" 
-                : "top-1/2 left-0 -translate-y-1/2 text-[14px] md:text-[18px] text-[#FCFBF8]/40 justify-center"
+                ? "text-[11px] md:text-[13px] text-[#FCFBF8]/50 md:top-6 md:left-6 md:translate-x-0 md:translate-y-0 md:!w-auto md:justify-start" 
+                : "text-[14px] md:text-[18px] text-[#FCFBF8]/40 md:top-1/2 md:left-0 md:-translate-y-1/2 justify-center"
             )}
           >
             {specimen.code}
@@ -94,10 +90,10 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
 
           {/* Scrambled Name (Reveals in Center) */}
           <div className={cn(
-            "absolute inset-0 flex items-center justify-center px-6 text-center transition-opacity duration-500 delay-100",
+            "flex-1 flex items-center justify-center px-6 text-center min-h-[3rem] transition-opacity duration-500 delay-100",
             isHovering ? "opacity-100" : "opacity-0 pointer-events-none"
           )}>
-            <h3 className="text-xl font-light tracking-wide text-[#FCFBF8]/90 font-[var(--font-archivo)] leading-snug break-words">
+            <h3 className="text-xl font-light tracking-wide text-[#FCFBF8]/90 font-[var(--font-archivo)] leading-snug break-words hyphens-auto min-h-[3rem] flex items-center justify-center">
               <DecryptText 
                 text={specimen.name} 
                 isHovering={isHovering} 
@@ -107,7 +103,7 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
           </div>
 
           {/* Bottom Prominent Color Bar & Hex (CAPILLARY ANIMATION) */}
-          <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-3">
+          <div className="flex flex-col gap-3">
             <div className="w-full h-2 bg-[#FCFBF8]/5 relative overflow-hidden rounded-[1px]">
               <div 
                 className="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -171,7 +167,7 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
 
       <div className="relative z-10 w-full px-6 md:px-20 py-6">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-12 md:pt-20 pb-10 mb-16 border-b border-white/[0.05] bg-[#040404]/10 backdrop-blur-2xl flex items-center justify-center">
+        <div className="sticky top-0 z-50 pt-12 md:pt-20 pb-10 mb-16 px-6 border-b border-white/[0.05] bg-[#040404]/10 backdrop-blur-2xl flex items-center justify-center">
           <Link 
             href="/"
             data-thermal-hover="true"
@@ -187,7 +183,7 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
         </div>
 
         {/* SPECIMEN GRID */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-24">
           {dataset.map((specimen, idx) => (
              <div key={specimen.id}>
                <Card 
