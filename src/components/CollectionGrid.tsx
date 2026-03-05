@@ -65,7 +65,7 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
     >
       <Link href={`/specimen/${specimen.code}`} className="block cursor-pointer">
         <div
-          className="group relative min-h-[22rem] flex flex-col justify-between p-6 border border-white/5 bg-transparent overflow-hidden transition-all duration-500 hover:bg-[#FCFBF8]/[0.03] hover:border-[#FCFBF8]/20 hover:backdrop-blur-sm"
+          className="group relative min-h-[26rem] md:min-h-[20rem] flex flex-col justify-between p-6 border border-white/5 bg-transparent overflow-hidden transition-all duration-500 hover:bg-[#FCFBF8]/[0.03] hover:border-[#FCFBF8]/20 hover:backdrop-blur-sm"
           data-thermal-hover="true"
         >
           {/* Top Right: Category (Hidden unless hovered) */}
@@ -79,7 +79,7 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
           {/* Dynamic Color Code: Reserved top on mobile, gliding absolute on desktop */}
           <div 
             className={cn(
-              "relative md:absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full mb-4 md:mb-0",
+              "relative md:absolute transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-10 font-mono tracking-[0.3em] uppercase pointer-events-none flex w-full mb-6 md:mb-0",
               isHovering 
                 ? "text-[11px] md:text-[13px] text-[#FCFBF8]/50 md:top-6 md:left-6 md:translate-x-0 md:translate-y-0 md:!w-auto md:justify-start" 
                 : "text-[14px] md:text-[18px] text-[#FCFBF8]/40 md:top-1/2 md:left-0 md:-translate-y-1/2 justify-center"
@@ -167,18 +167,18 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
 
       <div className="relative z-10 w-full px-6 md:px-20 py-6">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-12 md:pt-20 pb-10 mb-16 px-6 border-b border-white/[0.05] bg-[#040404]/10 backdrop-blur-2xl flex items-center justify-center">
+        <div className="sticky top-0 z-50 pt-6 pb-4 md:pt-12 md:pb-10 mb-8 md:mb-16 border-b border-white/[0.05] bg-[#040404]/90 backdrop-blur-2xl flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
           <Link 
             href="/"
             data-thermal-hover="true"
-            className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            className="relative md:absolute md:left-0 md:top-1/2 md:-translate-y-1/2 min-h-[44px] flex items-center text-[12px] md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/40 hover:text-white uppercase font-[var(--font-archivo)] transition-all duration-300"
             aria-label="Back to Scalar Home"
           >
             SCALAR
           </Link>
-          <h2 className="text-xl md:text-3xl font-light tracking-[0.4em] uppercase font-[var(--font-archivo)] flex gap-4">
+          <h2 className="text-2xl md:text-3xl font-light tracking-[0.3em] md:tracking-[0.4em] uppercase font-[var(--font-archivo)] flex items-center gap-3">
             <span className="text-[#A80000] drop-shadow-[0_0_12px_rgba(168,0,0,0.3)]">{category}</span>
-            <span className="text-[#FCFBF8]/40">REGISTRY</span>
+            <span className="text-[#FCFBF8]/40 hidden md:inline">REGISTRY</span>
           </h2>
         </div>
 
