@@ -23,11 +23,15 @@ export function getLumaOpacity(hex: string, baseOpacity: number): number {
   return Math.min(baseOpacity * powerCurve, 1.0);
 }
 
-/** Spectral decomposition: converts flat pigment into thermal light map (core, corona, atmosphere) */
+/** Spectral decomposition: converts flat pigment into thermal light map (core, corona, atmosphere). Handles invalid hex, pure black, pure white. */
 export function computeSpectralLayers(hex: string): { core: string; corona: string; atmosphere: string } {
-  let r = parseInt(hex.slice(1, 3), 16) / 255;
-  let g = parseInt(hex.slice(3, 5), 16) / 255;
-  let b = parseInt(hex.slice(5, 7), 16) / 255;
+  const validHex = /^#([0-9A-F]{3}){1,2}$/i.test(hex);
+  if (!hex || !validHex) return { core: '#ffffff', corona: '#ffffff', atmosphere: '#000000' };
+
+  const expanded = hex.length === 4 ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}` : hex;
+  let r = parseInt(expanded.slice(1, 3), 16) / 255;
+  let g = parseInt(expanded.slice(3, 5), 16) / 255;
+  let b = parseInt(expanded.slice(5, 7), 16) / 255;
 
   const max = Math.max(r, g, b),
     min = Math.min(r, g, b);
@@ -52,12 +56,15 @@ export function computeSpectralLayers(hex: string): { core: string; corona: stri
     h /= 6;
   }
 
+  if (l < 0.05) l = 0.05;
+  if (s < 0.05) s = 0.05;
+
   const satAtm = Math.min(s * 1.5, 1);
-  const lumAtm = l * 0.4;
+  const lumAtm = Math.max(l * 0.4, 0.02);
   const satCor = s;
   const lumCor = Math.min(l * 1.2, 0.85);
-  const satCore = s * 0.4;
-  const lumCore = 0.96;
+  const satCore = Math.max(s * 0.2, 0);
+  const lumCore = 0.94;
 
   const hslToHex = (hVal: number, sVal: number, lVal: number): string => {
     const hue2rgb = (p: number, q: number, t: number) => {
