@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { SPECIMEN_DATA, Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
 import SpectralBloom from './SpectralBloom'
+import { useColor } from '@/context/ColorContext'
 
 const DECRYPT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+'
 
@@ -47,6 +48,7 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
 function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: number, onHover: (color: string) => void, onLeave: () => void }) {
   const [isHovering, setIsHovering] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
+  const { setGlobalColor } = useColor()
 
   return (
     <motion.div 
@@ -57,10 +59,12 @@ function Card({ specimen, idx, onHover, onLeave }: { specimen: Specimen, idx: nu
       onMouseEnter={() => {
         setIsHovering(true)
         onHover(specimen.hex)
+        setGlobalColor(specimen.hex)
       }}
       onMouseLeave={() => {
         setIsHovering(false)
         onLeave()
+        setGlobalColor(null)
       }}
     >
       <Link href={`/specimen/${specimen.code}`} className="block cursor-pointer">

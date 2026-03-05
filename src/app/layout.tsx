@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Archivo, Archivo_Narrow } from 'next/font/google'
 import './globals.css'
 import ThermalCursor from '@/components/ThermalCursor'
+import { ColorProvider } from '@/context/ColorContext'
 
 const archivo = Archivo({ 
   subsets: ['latin'],
@@ -37,8 +38,10 @@ export default function RootLayout({
           </filter>
         </svg>
 
-        <ThermalCursor />
-        {children}
+        <ColorProvider>
+          <ThermalCursor />
+          {children}
+        </ColorProvider>
       </body>
     </html>
   )
