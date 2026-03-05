@@ -58,44 +58,49 @@ export default function ThermalCursor() {
 
   return (
     <div className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-screen">
-       {/* LAYER 3: TOP MIST (Color) */}
+       {/* LAYER 3: TOP (Red/Pigment) - The Main Bloom */}
        <motion.div
-        style={{ x: x3, y: y3 }}
+        style={{ x: x3, y: y3 }} // Heaviest lag
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-          width: isHovering ? 100 : 25,
-          height: isHovering ? 100 : 25,
-          opacity: isHovering ? 0.8 : 0.5,
+          // EXPAND on hover to cover the other layers
+          width: isHovering ? 80 : 30,
+          height: isHovering ? 80 : 30,
+          // Solidify on hover
+          opacity: isHovering ? 1 : 0.4,
           backgroundColor: targetColor,
-          filter: isHovering ? 'blur(25px)' : 'blur(8px)', // Bloomy when hovering
+          filter: isHovering ? 'blur(10px)' : 'blur(20px)'
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.5 }}
        />
 
-       {/* LAYER 2: BRIDGE (Orange/Yellow oxide tint) */}
+       {/* LAYER 2: MIDDLE (Azo Orange) - The Bridge */}
        <motion.div
         style={{ x: x2, y: y2 }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-          width: isHovering ? 60 : 16,
-          height: isHovering ? 60 : 16,
-          opacity: 0.6,
-          backgroundColor: isHovering ? targetColor : '#D98700', 
-          filter: isHovering ? 'blur(15px)' : 'blur(5px)',
+          // CONTRACT/HIDE on hover (Assimilated into the bloom)
+          width: isHovering ? 0 : 20, 
+          height: isHovering ? 0 : 20,
+          opacity: isHovering ? 0 : 0.5,
+          backgroundColor: '#D98700',
+          filter: 'blur(8px)'
         }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.3 }}
        />
 
-       {/* LAYER 1: CORE (White Lightbulb) */}
+       {/* LAYER 1: BOTTOM (White Light) - The Spark */}
        <motion.div
         style={{ x: x1, y: y1 }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/90"
         animate={{
-          width: isHovering ? 20 : 6,
-          height: isHovering ? 20 : 6,
+          // SNAP to center of bloom on hover
+          width: isHovering ? 0 : 8,
+          height: isHovering ? 0 : 8,
+          opacity: isHovering ? 0 : 1, // Hides when solid bloom appears
           filter: 'blur(3px)'
         }}
-        transition={{ duration: 0.1 }}
+        transition={{ duration: 0.2 }}
        />
     </div>
   )
