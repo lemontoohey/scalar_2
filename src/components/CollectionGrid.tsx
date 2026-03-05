@@ -165,7 +165,7 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
 
       <SpectralBloom hex={hoveredHex} />
 
-      <div className="relative z-10 w-full px-6 md:px-20 py-6">
+      <div className="relative z-30 w-full px-6 md:px-20 py-6">
         {/* TOP NAVIGATION */}
         <div className="sticky top-0 z-50 pt-6 pb-4 md:pt-12 md:pb-10 mb-8 md:mb-16 border-b border-white/[0.05] bg-[#040404]/90 backdrop-blur-2xl flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
           <Link 

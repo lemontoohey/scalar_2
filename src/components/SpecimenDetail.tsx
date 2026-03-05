@@ -78,9 +78,9 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
         transition={{ duration: 3.5, ease: "easeOut" }}
       />
 
-      {/* ETHEREAL MIST (Moved to Right, Larger, Bright Center) */}
+      {/* ETHEREAL MIST (z-0 behind interface, visible through glass) */}
       <motion.div 
-        className="absolute right-[-30vw] md:right-[-10vw] top-[5%] bottom-0 flex items-center pointer-events-none z-10 will-change-[transform,opacity]"
+        className="absolute right-[-30vw] md:right-[-10vw] top-[5%] bottom-0 flex items-center pointer-events-none z-0 will-change-[transform,opacity]"
         initial={{ opacity: 0, scale: 1.5 }} // Apparates out of the smoke
         animate={
           phase === 'flooding' ? { opacity: getLumaOpacity(specimen.hex, 1), scale: 20 } : 
@@ -128,34 +128,43 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
         {/* Content Block (Replaced Typewriter with ApparateText) */}
         <div className="flex-1 flex flex-col justify-center max-w-xl mt-12">
           
-          {/* Volumetric Refraction - Physical mass, illuminated from the side */}
+          {/* Automotive Clear-Coat - Glossy 3D badge with shine sweep */}
           <ApparateText delay={0.2} className="h-[80px] md:h-[110px] flex items-center">
             <style>{`
+              @keyframes glossSweep {
+                0% { background-position: -200% 0; }
+                100% { background-position: 200% 0; }
+              }
               @keyframes volumetricPulse {
                 0%, 100% { 
                   text-shadow: 
-                    1px 1px 1px rgba(255,255,255,0.4), 
-                    -1px -1px 1px rgba(0,0,0,0.5),
-                    0 0 20px ${specimen.hex}30, 
-                    0 0 40px ${specimen.hex}10;
-                  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateZ(0) scale(1);
+                    0.5px 0.5px 0px rgba(255,255,255,0.4),
+                    -0.5px -0.5px 0px rgba(0,0,0,0.6),
+                    0 0 30px ${specimen.hex}40, 
+                    0 0 60px ${specimen.hex}20;
+                  transform: translateZ(0) scale(1) rotateX(4deg) rotateY(-4deg);
                 }
                 50% { 
                   text-shadow: 
-                    2px 2px 2px rgba(255,255,255,0.2), 
-                    -1px -1px 1px rgba(0,0,0,0.3),
-                    0 0 50px ${specimen.hex}70, 
-                    0 0 80px ${specimen.hex}30;
-                  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateZ(0) scale(1.02);
+                    1px 1px 1px rgba(255,255,255,0.6),
+                    -1px -1px 1px rgba(0,0,0,0.4),
+                    0 0 60px ${specimen.hex}70, 
+                    0 0 100px ${specimen.hex}40;
+                  transform: translateZ(0) scale(1.02) rotateX(6deg) rotateY(-6deg);
                 }
               }
             `}</style>
             <span 
-              className="text-6xl sm:text-8xl md:text-[10rem] font-light tracking-[0.15em] uppercase font-[var(--font-archivo)] will-change-transform"
+              className="text-6xl sm:text-8xl md:text-[10rem] font-light tracking-[0.15em] uppercase font-[var(--font-archivo)] will-change-transform bg-clip-text"
               style={{ 
-                color: specimen.hex,
-                animation: 'volumetricPulse 8s ease-in-out infinite',
-                filter: 'contrast(1.1) brightness(1.2)'
+                color: 'transparent',
+                backgroundImage: `linear-gradient(110deg, ${specimen.hex} 40%, #ffffff 50%, ${specimen.hex} 60%)`,
+                backgroundSize: '200% 100%',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                animation: 'volumetricPulse 8s ease-in-out infinite, glossSweep 12s linear infinite',
+                filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))',
+                transformStyle: 'preserve-3d',
               }} 
             >
               {specimen.code}
@@ -179,7 +188,10 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
 
             <button 
               onClick={() => setSelectedVariant('soup')}
-              className={cn("w-full text-left min-h-[44px] p-4 border transition-all duration-300 relative overflow-hidden group", selectedVariant === 'soup' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30")}
+              className={cn(
+                "w-full text-left p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
+                selectedVariant === 'soup' && `border-[${specimen.hex}] bg-white/10`
+              )}
               aria-label="Select Sub-5 Micron Soup Architecture"
             >
               {selectedVariant === 'soup' && <div className="absolute inset-0 opacity-20" style={{ backgroundColor: specimen.hex }} />}
@@ -189,7 +201,10 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
 
             <button 
               onClick={() => setSelectedVariant('rothko')}
-              className={cn("w-full text-left min-h-[44px] p-4 border transition-all duration-300 relative overflow-hidden group", selectedVariant === 'rothko' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30")}
+              className={cn(
+                "w-full text-left p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
+                selectedVariant === 'rothko' && `border-[${specimen.hex}] bg-white/10`
+              )}
               aria-label="Select Rothko&apos;s UV-Flash Architecture"
             >
               {selectedVariant === 'rothko' && <div className="absolute inset-0 opacity-20" style={{ backgroundColor: specimen.hex }} />}
@@ -236,9 +251,9 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0 }}
               transition={{ duration: 0.7, ease:[0.16, 1, 0.3, 1] }}
-              className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-[#020202]/10 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-40 overflow-y-auto overscroll-contain touch-pan-y pt-12 md:pt-20 px-6 md:px-12 lg:px-20 pb-12 lg:pb-20 will-change-[transform,opacity]"
+              className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-black/40 backdrop-blur-[40px] border-l border-white/10 shadow-[-20px_0_60px_rgba(0,0,0,0.8)] z-40 overflow-y-auto overscroll-contain touch-pan-y p-12 md:p-20 will-change-[transform,opacity]"
             >
-            <h3 className="text-2xl font-light tracking-[0.3em] text-white mb-12 uppercase font-[var(--font-archivo)] mt-12">
+            <h3 className="text-2xl font-light tracking-[0.3em] text-white mb-12 uppercase font-[var(--font-archivo)]">
               System <span className="text-white/30">Architecture</span>
             </h3>
 
