@@ -128,43 +128,42 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
         {/* Content Block (Replaced Typewriter with ApparateText) */}
         <div className="flex-1 flex flex-col justify-center max-w-xl mt-12">
           
-          {/* Automotive Clear-Coat - Glossy 3D badge with shine sweep */}
+          {/* Automotive Rim Lighting - Specular highlights dancing on 3D edges */}
           <ApparateText delay={0.2} className="h-[80px] md:h-[110px] flex items-center">
             <style>{`
-              @keyframes glossSweep {
-                0% { background-position: -200% 0; }
-                100% { background-position: 200% 0; }
-              }
-              @keyframes volumetricPulse {
+              @keyframes rimDance {
                 0%, 100% { 
                   text-shadow: 
-                    0.5px 0.5px 0px rgba(255,255,255,0.4),
-                    -0.5px -0.5px 0px rgba(0,0,0,0.6),
-                    0 0 30px ${specimen.hex}40, 
-                    0 0 60px ${specimen.hex}20;
-                  transform: translateZ(0) scale(1) rotateX(4deg) rotateY(-4deg);
+                    0.5px 0.5px 0.5px rgba(255,255,255,0.4),
+                    -0.5px -0.5px 0.5px rgba(0,0,0,0.4),
+                    0 0 20px ${specimen.hex}30;
                 }
-                50% { 
+                33% { 
                   text-shadow: 
-                    1px 1px 1px rgba(255,255,255,0.6),
-                    -1px -1px 1px rgba(0,0,0,0.4),
-                    0 0 60px ${specimen.hex}70, 
-                    0 0 100px ${specimen.hex}40;
-                  transform: translateZ(0) scale(1.02) rotateX(6deg) rotateY(-6deg);
+                    1px 0.5px 1.5px rgba(255,255,255,0.7),
+                    -0.5px -0.5px 0.5px rgba(0,0,0,0.5),
+                    0 0 30px ${specimen.hex}40;
                 }
+                66% { 
+                  text-shadow: 
+                    0.5px 1px 2px rgba(255,255,255,0.5),
+                    -0.8px -0.8px 1px rgba(255,255,255,0.2),
+                    0 0 25px ${specimen.hex}35;
+                }
+              }
+              @keyframes float3D {
+                0%, 100% { transform: perspective(1000px) rotateX(4deg) rotateY(-4deg) translateY(0px); }
+                50% { transform: perspective(1000px) rotateX(6deg) rotateY(-6deg) translateY(-10px); }
               }
             `}</style>
             <span 
-              className="text-6xl sm:text-8xl md:text-[10rem] font-light tracking-[0.15em] uppercase font-[var(--font-archivo)] will-change-transform bg-clip-text"
+              className="text-6xl sm:text-8xl md:text-[11rem] font-light tracking-[0.15em] uppercase font-[var(--font-archivo)] will-change-transform"
               style={{ 
-                color: 'transparent',
-                backgroundImage: `linear-gradient(110deg, ${specimen.hex} 40%, #ffffff 50%, ${specimen.hex} 60%)`,
-                backgroundSize: '200% 100%',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                animation: 'volumetricPulse 8s ease-in-out infinite, glossSweep 12s linear infinite',
-                filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))',
+                color: specimen.hex,
+                animation: 'rimDance 5s ease-in-out infinite, float3D 8s ease-in-out infinite',
+                filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.6))',
                 transformStyle: 'preserve-3d',
+                WebkitFontSmoothing: 'antialiased',
               }} 
             >
               {specimen.code}
