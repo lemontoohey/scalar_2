@@ -18,31 +18,34 @@ export default function Home() {
       }
       const ctx = audioContextRef.current
 
-      const osc = ctx.createOscillator()
-      const harmonic = ctx.createOscillator()
-      const gain = ctx.createGain()
+      const sub = ctx.createOscillator()
+      const knock = ctx.createOscillator()
+      const masterBus = ctx.createGain()
+      const filter = ctx.createBiquadFilter()
 
-      const baseFreq = 60
-      osc.type = 'sine'
-      osc.frequency.setValueAtTime(baseFreq, ctx.currentTime)
-      osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 1.5)
+      sub.type = 'sine'
+      sub.frequency.setValueAtTime(65, ctx.currentTime)
+      sub.frequency.exponentialRampToValueAtTime(55, ctx.currentTime + 0.1)
 
-      harmonic.type = 'sine'
-      harmonic.frequency.setValueAtTime(baseFreq * 2, ctx.currentTime)
-      harmonic.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 1.5)
+      knock.type = 'sine'
+      knock.frequency.setValueAtTime(110, ctx.currentTime)
 
-      gain.gain.setValueAtTime(0, ctx.currentTime)
-      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.1)
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0)
+      filter.type = 'lowpass'
+      filter.frequency.value = 150
 
-      osc.connect(gain)
-      harmonic.connect(gain)
-      gain.connect(ctx.destination)
+      masterBus.gain.setValueAtTime(0, ctx.currentTime)
+      masterBus.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.02)
+      masterBus.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8)
 
-      osc.start()
-      harmonic.start()
-      osc.stop(ctx.currentTime + 2.0)
-      harmonic.stop(ctx.currentTime + 2.0)
+      sub.connect(filter)
+      knock.connect(filter)
+      filter.connect(masterBus)
+      masterBus.connect(ctx.destination)
+
+      sub.start(ctx.currentTime)
+      knock.start(ctx.currentTime + 0.002)
+      sub.stop(ctx.currentTime + 1.0)
+      knock.stop(ctx.currentTime + 0.5)
     } catch (e) {
       console.error('Audio play failed', e)
     }
