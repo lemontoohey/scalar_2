@@ -19,6 +19,20 @@ export default function SpectralBloom({ hex }: { hex: string | null }) {
 
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      {/* LAYER 4: HALO (Ultra Wide) */}
+      <motion.div
+        key={`halo-${hex}`}
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{ duration: 3.5, ease: 'easeOut' }}
+        style={{
+          mixBlendMode: 'screen',
+          background: `radial-gradient(circle at 50% 50%, ${corona} 0%, transparent 85%)`,
+          filter: 'blur(120px)',
+        }}
+      />
+
       {/* LAYER 1: ATMOSPHERE (Deep) */}
       <motion.div
         key={`atm-${hex}`}
@@ -36,11 +50,11 @@ export default function SpectralBloom({ hex }: { hex: string | null }) {
         transition={
           isIgnited
             ? {
-                duration: 12,
+                duration: 8, // Massively increased
                 repeat: Infinity,
                 ease: 'easeInOut',
               }
-            : { duration: 0.8 }
+            : { duration: 2.5 } // Slow reveal
         }
         onAnimationComplete={() => {
           if (!isIgnited) setIgnited(true);
@@ -60,7 +74,7 @@ export default function SpectralBloom({ hex }: { hex: string | null }) {
         className="absolute inset-0"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.6, scale: 1 }}
-        transition={{ duration: 1.2, ease: 'easeOut' }}
+        transition={{ duration: 3.0, ease: 'easeOut' }} // Slow reveal
         style={{
           mixBlendMode: 'plus-lighter',
           background: `radial-gradient(circle at 50% 50%, ${corona} 0%, transparent 50%)`,
@@ -84,11 +98,11 @@ export default function SpectralBloom({ hex }: { hex: string | null }) {
         transition={
           isIgnited
             ? {
-                duration: 4,
+                duration: 5, // Massively increased
                 repeat: Infinity,
                 ease: 'easeInOut',
               }
-            : { duration: 0.6 }
+            : { duration: 1.5 } // Slow reveal
         }
         style={{
           mixBlendMode: 'plus-lighter',

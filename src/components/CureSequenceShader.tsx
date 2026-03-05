@@ -81,12 +81,14 @@ const fragmentShader = `
   
       float alpha = singularity * (f * 1.5 + 0.2);
       
-      // Recession Fade
-      float recession = 1.0 - smoothstep(0.6, 1.0, uProgress);
-      alpha *= recession;
-  
-      gl_FragColor = vec4(finalColor, alpha);
-  }
+    // EDGE BLUR FIX:
+    // Create a soft radial vignette to kill the hard square edges
+    float vignette = 1.0 - smoothstep(0.4, 0.7, dist); // Start fading at 0.4, totally gone by 0.7
+    
+    alpha *= recession * vignette; // Apply vignette to final alpha
+    
+    gl_FragColor = vec4(finalColor, alpha);
+}
 `
 
 // Easing: sineOut (smooth start), exponentialIn (recession)

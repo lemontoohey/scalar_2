@@ -154,8 +154,8 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
                 color: 'transparent',
                 // 3 Layers: White Edge sheen, Pigment Color, and a Noise texture
                 backgroundImage: `
-                  linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 25%, rgba(255,255,255,0) 75%, rgba(255,255,255,0.4) 100%),
-                  url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.25'/%3E%3C/svg%3E"),
+                  linear-gradient(120deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.2) 100%),
+                  url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E"),
                   linear-gradient(to right, ${specimen.hex}, ${specimen.hex})
                 `,
                 backgroundSize: '200% 200%, 100% 100%, 100% 100%',
@@ -165,6 +165,8 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
                 transformStyle: 'preserve-3d',
                 // Make it look etched
                 WebkitTextStroke: `1px ${specimen.hex}80`,
+                filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.8))',
+                textShadow: `0px 2px 4px rgba(0,0,0,0.5)`,
               }} 
             >
               {specimen.code}
