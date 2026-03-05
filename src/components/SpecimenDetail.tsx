@@ -188,7 +188,7 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
             <button 
               onClick={() => setSelectedVariant('soup')}
               className={cn(
-                "w-full text-left p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
+                "w-full text-left min-h-[44px] p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
                 selectedVariant === 'soup' && `border-[${specimen.hex}] bg-white/10`
               )}
               aria-label="Select Sub-5 Micron Soup Architecture"
@@ -201,7 +201,7 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
             <button 
               onClick={() => setSelectedVariant('rothko')}
               className={cn(
-                "w-full text-left p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
+                "w-full text-left min-h-[44px] p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
                 selectedVariant === 'rothko' && `border-[${specimen.hex}] bg-white/10`
               )}
               aria-label="Select Rothko&apos;s UV-Flash Architecture"
