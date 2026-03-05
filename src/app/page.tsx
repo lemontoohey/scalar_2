@@ -19,21 +19,28 @@ export default function Home() {
       
       const ctx = audioContextRef.current
       const osc = ctx.createOscillator()
+      const harmonic = ctx.createOscillator()
       const gain = ctx.createGain()
       
       osc.type = 'sine'
       osc.frequency.setValueAtTime(60, ctx.currentTime)
       osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 1.5)
+      harmonic.type = 'sine'
+      harmonic.frequency.setValueAtTime(120, ctx.currentTime)  // First harmonic for laptop speakers
+      harmonic.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 1.5)
       
       gain.gain.setValueAtTime(0, ctx.currentTime)
       gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.1)
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0)
       
       osc.connect(gain)
+      harmonic.connect(gain)
       gain.connect(ctx.destination)
       
       osc.start()
+      harmonic.start()
       osc.stop(ctx.currentTime + 2.0)
+      harmonic.stop(ctx.currentTime + 2.0)
     } catch (e) {
       console.error('Audio play failed', e)
     }

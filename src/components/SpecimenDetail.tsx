@@ -128,19 +128,34 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
         {/* Content Block (Replaced Typewriter with ApparateText) */}
         <div className="flex-1 flex flex-col justify-center max-w-xl mt-12">
           
-          {/* Bioluminescent Pulse - Inner Light breathing from within */}
+          {/* Volumetric Refraction - Physical mass, illuminated from the side */}
           <ApparateText delay={0.2} className="h-[80px] md:h-[110px] flex items-center">
             <style>{`
-              @keyframes bioPulse {
-                0%, 100% { text-shadow: 0 0 15px ${specimen.hex}40, 0 0 5px ${specimen.hex}20; opacity: 1; }
-                50% { text-shadow: 0 0 45px ${specimen.hex}90, 0 0 20px ${specimen.hex}60; opacity: 1; }
+              @keyframes volumetricPulse {
+                0%, 100% { 
+                  text-shadow: 
+                    1px 1px 1px rgba(255,255,255,0.4), 
+                    -1px -1px 1px rgba(0,0,0,0.5),
+                    0 0 20px ${specimen.hex}30, 
+                    0 0 40px ${specimen.hex}10;
+                  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateZ(0) scale(1);
+                }
+                50% { 
+                  text-shadow: 
+                    2px 2px 2px rgba(255,255,255,0.2), 
+                    -1px -1px 1px rgba(0,0,0,0.3),
+                    0 0 50px ${specimen.hex}70, 
+                    0 0 80px ${specimen.hex}30;
+                  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateZ(0) scale(1.02);
+                }
               }
             `}</style>
             <span 
-              className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] will-change-[text-shadow,opacity]"
+              className="text-6xl sm:text-8xl md:text-[10rem] font-light tracking-[0.15em] uppercase font-[var(--font-archivo)] will-change-transform"
               style={{ 
                 color: specimen.hex,
-                animation: 'bioPulse 4s ease-in-out infinite' 
+                animation: 'volumetricPulse 8s ease-in-out infinite',
+                filter: 'contrast(1.1) brightness(1.2)'
               }} 
             >
               {specimen.code}
