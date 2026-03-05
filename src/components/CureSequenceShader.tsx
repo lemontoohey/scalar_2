@@ -49,46 +49,31 @@ const fragmentShader = `
       vec2 center = vec2(0.5, 0.5);
       float dist = length(vUv - center);
       
-      // TIGHTENED SPREAD: Reduced singularity
-      float singularity = 1.0 - smoothstep(0.05, 0.32, dist); // Expanded slightly for 'lungs'
+      // SOFT MIST EDGE:
+      // Solid in middle (0.0 to 0.3), Soft Fade (0.3 to 0.5), Invisible (> 0.5)
+      // This turns the square plane into a misty sphere of influence.
+      float softEdge = 1.0 - smoothstep(0.3, 0.6, dist);
   
-      // DOMAIN WARPING (The Soul)
-      // Instead of simple noise, we warp the coordinate space recursively.
-      vec2 q = vec2(0.);
-      q.x = fbm(vUv * 2.0 + 0.1 * uTime * uSpeed);
-      q.y = fbm(vUv * 2.0 + vec2(1.0));
-  
-      vec2 r = vec2(0.);
-      r.x = fbm(vUv * 2.0 + 1.0 * q + vec2(1.7, 9.2) + 0.15 * uTime * uSpeed);
-      r.y = fbm(vUv * 2.0 + 1.0 * q + vec2(8.3, 2.8) + 0.126 * uTime * uSpeed);
-  
-      float f = fbm(vUv + r);
+      // Re-verify Color Intensity
+      vec3 hotCore = vec3(1.0, 0.95, 0.8);
+      vec3 deepRed = vec3(0.4, 0.0, 0.0);
       
-      // Deep red biologic tint (SCALAR RED: ~0.65 red, low green/blue)
-      // Darker, richer base than before
-      vec3 baseColor = vec3(0.1, 0.0, 0.0); // Void
-      vec3 bloodColor = vec3(0.5, 0.02, 0.05); // Oxygenated
-      vec3 hotColor = vec3(1.0, 0.9, 0.8); // White Heat
-  
-      // Color mixing based on warping density
-      vec3 finalColor = mix(baseColor, bloodColor, clamp((f*f)*4.0, 0.0, 1.0));
-      finalColor = mix(finalColor, hotColor, clamp(length(q) - 0.2, 0.0, 1.0) * smoothstep(0.0, 0.5, uProgress));
-  
-      // Ignition Intensity
-      // During ignition, the warp drives the light intensity
-      float ignitionHeat = smoothstep(0.0, 0.4, uProgress) * (1.0 - smoothstep(0.5, 1.0, uProgress));
-      finalColor += hotColor * ignitionHeat * f;
-  
-      float alpha = singularity * (f * 1.5 + 0.2);
+      float warp = fbm(vUv * 3.0 + uTime * 0.1); 
+      float structure = fbm(vUv + warp);
       
-    // EDGE BLUR FIX:
-    // Create a soft radial vignette to kill the hard square edges
-    float vignette = 1.0 - smoothstep(0.4, 0.7, dist); // Start fading at 0.4, totally gone by 0.7
-    
-    alpha *= recession * vignette; // Apply vignette to final alpha
-    
-    gl_FragColor = vec4(finalColor, alpha);
-}
+      // Ignition curve
+      float heat = smoothstep(0.0, 0.5, uProgress) * (1.0 - smoothstep(0.5, 1.0, uProgress));
+      
+      vec3 col = mix(deepRed, hotCore, heat * structure);
+      
+      // Recession logic
+      float fade = 1.0 - smoothstep(0.7, 1.0, uProgress);
+      
+      // Final Alpha = Structure * Vignette * Fade
+      float alpha = (structure * 0.5 + 0.5) * softEdge * fade;
+  
+      gl_FragColor = vec4(col, alpha);
+  }
 `
 
 // Easing: sineOut (smooth start), exponentialIn (recession)
