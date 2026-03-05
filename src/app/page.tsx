@@ -12,61 +12,97 @@ export default function Home() {
   const audioContextRef = useRef<AudioContext | null>(null)
 
   const playSubBass = useCallback(() => {
-    try {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
-      }
-      const ctx = audioContextRef.current
+    if (!audioContextRef.current) return
+    const ctx = audioContextRef.current
+    if (ctx.state === 'suspended') ctx.resume()
 
-      const sub = ctx.createOscillator()
-      const knock = ctx.createOscillator()
-      const masterBus = ctx.createGain()
-      const filter = ctx.createBiquadFilter()
+    const masterBus = ctx.createGain()
+    const delayNode = ctx.createDelay(1.0)
+    const delayFeedback = ctx.createGain()
 
-      sub.type = 'sine'
-      sub.frequency.setValueAtTime(65, ctx.currentTime)
-      sub.frequency.exponentialRampToValueAtTime(55, ctx.currentTime + 0.1)
+    delayNode.delayTime.value = 0.35
+    delayFeedback.gain.value = 0.3
+    delayNode.connect(delayFeedback)
+    delayFeedback.connect(delayNode)
+    delayNode.connect(masterBus)
 
-      knock.type = 'sine'
-      knock.frequency.setValueAtTime(110, ctx.currentTime)
+    masterBus.gain.value = 0.9
+    masterBus.connect(ctx.destination)
 
-      filter.type = 'lowpass'
-      filter.frequency.value = 150
+    const spark = ctx.createOscillator()
+    const sparkGain = ctx.createGain()
+    spark.type = 'triangle'
+    spark.frequency.setValueAtTime(1200, ctx.currentTime)
+    spark.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05)
+    sparkGain.gain.setValueAtTime(0, ctx.currentTime)
+    sparkGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.005)
+    sparkGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05)
+    spark.connect(sparkGain)
+    sparkGain.connect(masterBus)
 
-      masterBus.gain.setValueAtTime(0, ctx.currentTime)
-      masterBus.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.02)
-      masterBus.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8)
+    const sub = ctx.createOscillator()
+    const subGain = ctx.createGain()
+    sub.type = 'sine'
+    sub.frequency.setValueAtTime(65, ctx.currentTime)
+    sub.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.8)
+    subGain.gain.setValueAtTime(0, ctx.currentTime)
+    subGain.gain.linearRampToValueAtTime(0.9, ctx.currentTime + 0.02)
+    subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
+    sub.connect(subGain)
+    subGain.connect(masterBus)
 
-      sub.connect(filter)
-      knock.connect(filter)
-      filter.connect(masterBus)
-      masterBus.connect(ctx.destination)
+    const ring = ctx.createOscillator()
+    const ringGain = ctx.createGain()
+    ring.type = 'sine'
+    ring.frequency.setValueAtTime(220, ctx.currentTime)
+    ringGain.gain.setValueAtTime(0, ctx.currentTime)
+    ringGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1)
+    ringGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.3)
+    ringGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
+    ring.connect(ringGain)
+    ringGain.connect(masterBus)
+    ringGain.connect(delayNode)
 
-      sub.start(ctx.currentTime)
-      knock.start(ctx.currentTime + 0.002)
-      sub.stop(ctx.currentTime + 1.0)
-      knock.stop(ctx.currentTime + 0.5)
-    } catch (e) {
-      console.error('Audio play failed', e)
-    }
+    spark.start(ctx.currentTime)
+    sub.start(ctx.currentTime)
+    ring.start(ctx.currentTime)
+    spark.stop(ctx.currentTime + 0.1)
+    sub.stop(ctx.currentTime + 1.6)
+    ring.stop(ctx.currentTime + 1.6)
   }, [])
 
   useEffect(() => {
-    return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-        audioContextRef.current = null;
+    if (typeof window === 'undefined') return
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+    }
+    const unlockAudio = () => {
+      if (audioContextRef.current?.state === 'suspended') {
+        audioContextRef.current.resume()
       }
-    };
-  }, []);
+    }
+    window.addEventListener('click', unlockAudio, { once: true })
+    window.addEventListener('mousemove', unlockAudio, { once: true })
+    window.addEventListener('touchstart', unlockAudio, { once: true })
+    window.addEventListener('keydown', unlockAudio, { once: true })
 
-  useEffect(() => {
     const t = setTimeout(() => {
       setShowButtons(true)
       playSubBass()
     }, 3500)
-    return () => clearTimeout(t)
-  },[playSubBass])
+
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('click', unlockAudio)
+      window.removeEventListener('mousemove', unlockAudio)
+      window.removeEventListener('touchstart', unlockAudio)
+      window.removeEventListener('keydown', unlockAudio)
+      if (audioContextRef.current) {
+        audioContextRef.current.close()
+        audioContextRef.current = null
+      }
+    }
+  }, [playSubBass])
 
   return (
     <main 
