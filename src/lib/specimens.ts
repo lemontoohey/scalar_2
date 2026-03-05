@@ -17,7 +17,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PV23', 
     name: 'DIOXAZINE VIOLET', 
     chemicalName: 'DIOXAZINE VIOLET', 
-    hex: '#2A0E45',
+    hex: '#31145A',
     description: 'The deepest transparent violet. For "Black-Out" glazes with a cold violet glow.'
   },
   { 
@@ -26,7 +26,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PG7', 
     name: 'PHTHALOCYANINE GREEN', 
     chemicalName: 'PHTHALOCYANINE GREEN', 
-    hex: '#004225',
+    hex: '#005C3A',
     description: 'The "Cool Green." Essential for clean teals, icy emeralds, and deep forest tones.'
   },
   { 
@@ -35,7 +35,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PR179', 
     name: 'PERYLENE MAROON', 
     chemicalName: 'PERYLENE MAROON', 
-    hex: '#4D0F14',
+    hex: '#591118',
     description: 'High transparency maroon with excellent lightfastness. Ideal for glazing.' // Generated
   },
   { 
@@ -44,7 +44,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PY128', 
     name: 'AZO CONDENSATION YELLOW', 
     chemicalName: 'AZO CONDENSATION YELLOW', 
-    hex: '#F2F500',
+    hex: '#EBE100',
     description: 'Transparent, high-performance yellow with excellent weather stability.' // Generated
   },
   { 
@@ -53,7 +53,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PB15:3', 
     name: 'PHTHALOCYANINE BLUE GS', 
     chemicalName: 'PHTHALOCYANINE BLUE GS', 
-    hex: '#00588A',
+    hex: '#004C8A',
     description: 'The foundation for all cool glazes. High transparency.'
   },
   { 
@@ -62,7 +62,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PB16', 
     name: 'METAL-FREE PHTHALO', 
     chemicalName: 'METAL-FREE PHTHALO', 
-    hex: '#007075',
+    hex: '#005B66',
     description: 'The "Glowing Sky" blue. Higher light reflection than 15:3.'
   },
   { 
@@ -71,25 +71,25 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PB15:6', 
     name: 'PHTHALOCYANINE BLUE RS', 
     chemicalName: 'PHTHALOCYANINE BLUE RS', 
-    hex: '#0E2245',
+    hex: '#0E2254',
     description: 'A deep, red-shade blue for clean violet transitions.'
   },
   { 
     id: '8', 
     category: 'organic', 
     code: 'PBk31', 
-    name: 'PERYLENE BLACK', 
-    chemicalName: 'PERYLENE BLACK', 
-    hex: '#080C08',
+    name: 'PERYLENE GREEN', 
+    chemicalName: 'PERYLENE GREEN', 
+    hex: '#0C2B1D',
     description: 'A "Transparent Black" with green/violet undertones. Deep depth.'
   },
   { 
     id: '9', 
     category: 'organic', 
     code: 'PBk32', 
-    name: 'PERYLENE GREEN', 
-    chemicalName: 'PERYLENE GREEN', 
-    hex: '#07120A',
+    name: 'PERYLENE BLACK', 
+    chemicalName: 'PERYLENE BLACK', 
+    hex: '#131714',
     description: 'Ultra-transparent with a ghostly green undertone.'
   },
   { 
@@ -98,7 +98,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PR264', 
     name: 'PYRROLO PYRROLE RUBY', 
     chemicalName: 'PYRROLO PYRROLE RUBY', 
-    hex: '#7A0012',
+    hex: '#8A001A',
     description: 'Deep, glass-like red. Essential for the "Rothko" maroon.'
   },
   { 
@@ -107,7 +107,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PO71', 
     name: 'TRANSPARENT PYRROLE ORANGE', 
     chemicalName: 'TRANSPARENT PYRROLE ORANGE', 
-    hex: '#D63300',
+    hex: '#E63900',
     description: 'Highest saturation orange. Zero cloudiness in layers.'
   },
   { 
@@ -116,7 +116,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PY150', 
     name: 'NICKEL AZO YELLOW', 
     chemicalName: 'NICKEL AZO YELLOW', 
-    hex: '#CC8C00',
+    hex: '#D98700',
     description: 'Turns from "mustard" to "liquid gold" as you layer it.'
   },
   { 
@@ -125,7 +125,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PR254', 
     name: 'PYRROLE RED', 
     chemicalName: 'PYRROLE RED', 
-    hex: '#B80000',
+    hex: '#CC0000',
     description: 'The cleanest, most "neutral" red for 50-layer saturation.'
   },
   { 
@@ -134,7 +134,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PR122', 
     name: 'QUINACRIDONE MAGENTA', 
     chemicalName: 'QUINACRIDONE MAGENTA', 
-    hex: '#BD0059',
+    hex: '#D1005D',
     description: 'Essential for violets and "electric" pink vibrations.'
   },
   { 
@@ -143,7 +143,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PV19', 
     name: 'QUINACRIDONE VIOLET', 
     chemicalName: 'QUINACRIDONE VIOLET', 
-    hex: '#5E002B',
+    hex: '#7A003C',
     description: 'Creates "clean" darks. Pushes the violet spectrum.'
   },
   { 
@@ -152,7 +152,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PG36', 
     name: 'PHTHALOCYANINE GREEN YS', 
     chemicalName: 'PHTHALOCYANINE GREEN YS', 
-    hex: '#008F29',
+    hex: '#008A2B',
     description: 'An "electric" green that feels radioactive in glazes.'
   },
   { 
@@ -161,7 +161,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PB60', 
     name: 'INDANTHRONE BLUE', 
     chemicalName: 'INDANTHRONE BLUE', 
-    hex: '#0A1129',
+    hex: '#0F1736',
     description: 'Deep, reddish-blue, distinct from Phthalo. Excellent lightfastness.' // Generated
   },
 
@@ -172,7 +172,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PY184', 
     name: 'BISMUTH VANADATE', 
     chemicalName: 'BISMUTH VANADATE', 
-    hex: '#FFD700',
+    hex: '#FFD900',
     description: 'The cleanest, high-luminosity inorganic yellow. The "Boutique King" of yellows.'
   },
   { 
@@ -181,7 +181,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PBk27', 
     name: 'IRON COBALT CHROMITE', 
     chemicalName: 'IRON COBALT CHROMITE', 
-    hex: '#050A14',
+    hex: '#0A0D14',
     description: 'A high-jetness spinel black with an icy blue undertone. Zero brown-drift.'
   },
   { 
@@ -190,7 +190,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PBr7', 
     name: 'NATURAL IRON OXIDE', 
     chemicalName: 'NATURAL IRON OXIDE', 
-    hex: '#3E2017',
+    hex: '#4A2A18',
     description: 'Natural Burnt Umber. For granulating, sedimentary textures and "wood-smoke" depth.'
   },
   { 
@@ -199,7 +199,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PR233', 
     name: 'CHROME TIN PINK', 
     chemicalName: 'CHROME TIN PINK', 
-    hex: '#D19BA3',
+    hex: '#C2878F',
     description: '"Potter\'s Pink." A dusty, sophisticated architectural pink impossible to mix using organics.'
   },
   { 
@@ -208,7 +208,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PW6 (NANO)', 
     name: 'TITANIUM DIOXIDE NANO', 
     chemicalName: 'TITANIUM DIOXIDE NANO', 
-    hex: '#E0E4ED',
+    hex: '#E6E9F0',
     description: '"Transparent White" used to create misty, hazy veils.'
   },
   { 
@@ -217,7 +217,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PR101', 
     name: 'SYNTHETIC IRON OXIDE RED', 
     chemicalName: 'SYNTHETIC IRON OXIDE RED', 
-    hex: '#70230E',
+    hex: '#6E220D',
     description: 'A "Nano-Rust" that looks like glowing mahogany wood.'
   },
   { 
@@ -226,7 +226,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PY42', 
     name: 'SYNTHETIC IRON OXIDE YELLOW', 
     chemicalName: 'SYNTHETIC IRON OXIDE YELLOW', 
-    hex: '#A8680D',
+    hex: '#B36B00',
     description: 'Needle-shaped crystals for high-transparency gold glazes.'
   },
   { 
@@ -235,7 +235,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PW5', 
     name: 'LITHOPONE', 
     chemicalName: 'LITHOPONE', 
-    hex: '#F2F2D9',
+    hex: '#F0F0E6',
     description: 'Our primary archival transparent white mixer.'
   },
   { 
@@ -244,7 +244,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PW7', 
     name: 'ZINC SULFIDE', 
     chemicalName: 'ZINC SULFIDE', 
-    hex: '#F7F7F7',
+    hex: '#F5F7FA',
     description: 'Pure Zinc Sulfide. Optical backlighting/glow.'
   },
   { 
@@ -262,7 +262,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PB36', 
     name: 'COBALT CHROMITE BLUE', 
     chemicalName: 'COBALT CHROMITE BLUE', 
-    hex: '#005C66',
+    hex: '#1F5966',
     description: 'Targeting architectural heat management.'
   },
   { 
@@ -271,7 +271,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PB28', 
     name: 'COBALT ALUMINATE BLUE', 
     chemicalName: 'COBALT ALUMINATE BLUE', 
-    hex: '#1C2C6B',
+    hex: '#143085',
     description: 'The industrial standard for Cobalt Blue.'
   },
   { 
@@ -280,7 +280,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PY53', 
     name: 'NICKEL ANTIMONY TITANIUM', 
     chemicalName: 'NICKEL ANTIMONY TITANIUM', 
-    hex: '#EBE68A',
+    hex: '#E0DB6B',
     description: 'A high-stability, "neon" yellow.'
   },
   { 
@@ -289,7 +289,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PG17', 
     name: 'CHROMIUM OXIDE GREEN', 
     chemicalName: 'CHROMIUM OXIDE GREEN', 
-    hex: '#44593C',
+    hex: '#475C3B',
     description: 'Low-abrasion, high-stability green.'
   },
   { 
@@ -298,7 +298,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PV15', 
     name: 'ULTRAMARINE VIOLET', 
     chemicalName: 'ULTRAMARINE VIOLET', 
-    hex: '#321C52',
+    hex: '#3B2261',
     description: 'High-purity specialist spectral violet.'
   },
   { 
@@ -307,7 +307,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PR259', 
     name: 'ULTRAMARINE PINK', 
     chemicalName: 'ULTRAMARINE PINK', 
-    hex: '#B57D8F',
+    hex: '#C77B95',
     description: 'High-purity specialist spectral pink.'
   },
   { 
@@ -316,7 +316,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'MAGNETITE', 
     name: 'MAGNETITE BLACK IRON', 
     chemicalName: 'MAGNETITE BLACK IRON', 
-    hex: '#121212',
+    hex: '#101114',
     description: 'High-jetness black with a cold, blue undertone.'
   },
   { 
@@ -325,7 +325,7 @@ export const SPECIMEN_DATA: Specimen[] = [
     code: 'PG50', 
     name: 'COBALT TITANATE GREEN', 
     chemicalName: 'COBALT TITANATE GREEN', 
-    hex: '#004029',
+    hex: '#125442',
     description: 'Bright, semi-opaque teal green with outstanding durability.' // Generated
   },
 ];

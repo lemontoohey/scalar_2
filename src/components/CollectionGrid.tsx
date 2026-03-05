@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { SPECIMEN_DATA, Specimen } from '@/lib/specimens'
-import { cn, getLumaOpacity } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import SpectralBloom from './SpectralBloom'
 
 const DECRYPT_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+'
 
@@ -34,8 +35,8 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
         onComplete()
       }
 
-      iterations += 3
-    }, 12)
+      iterations += 4
+    }, 8)
 
     return () => clearInterval(interval)
   }, [isHovering, text, onComplete])
@@ -166,26 +167,11 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
         }
       `}</style>
 
-      {/* AMBIENT BACKGROUND BLOOM (HDR Double Gradient) */}
-      <motion.div 
-        className="fixed inset-0 z-0 transition-all duration-700 pointer-events-none"
-        animate={hoveredHex ? { 
-          scale: [1, 1.1, 1],
-        } : { opacity: 0 }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        style={{
-          mixBlendMode: 'screen',
-          background: hoveredHex 
-            ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 40%), 
-               radial-gradient(circle at 50% 50%, ${hoveredHex}40 0%, transparent 80%)`
-            : 'transparent',
-          opacity: hoveredHex ? getLumaOpacity(hoveredHex, 0.6) : 0
-        } as React.CSSProperties}
-      />
+      <SpectralBloom hex={hoveredHex} />
 
-      <div className="relative z-10 w-full px-6 py-6 sm:px-12">
+      <div className="relative z-10 w-full px-6 md:px-20 py-6">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-12 pb-10 mb-16 border-b border-white/[0.05] bg-[#040404]/10 backdrop-blur-2xl flex items-center justify-center">
+        <div className="sticky top-0 z-50 pt-12 md:pt-20 pb-10 mb-16 border-b border-white/[0.05] bg-[#040404]/10 backdrop-blur-2xl flex items-center justify-center">
           <Link 
             href="/"
             data-thermal-hover="true"

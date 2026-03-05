@@ -10,10 +10,11 @@ export function generateStaticParams() {
 
 export default async function ShopPage({ params }: { params: Promise<{ code: string }> }) {
   const resolvedParams = await params;
-  const specimen = SPECIMEN_DATA.find((s) => s.code === resolvedParams.code)
+  const decodedCode = decodeURIComponent(resolvedParams.code);
+  const specimen = SPECIMEN_DATA.find((s) => s.code === decodedCode)
 
   if (!specimen) {
-    return <div>Specimen not found</div>
+    return <div className="text-white pt-20 text-center">Specimen not found: {decodedCode}</div>
   }
 
   return (

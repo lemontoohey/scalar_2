@@ -102,7 +102,7 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
       </motion.div>
 
       {/* MAIN INTERFACE */}
-      <div className="relative z-30 h-full w-full flex flex-col pt-12 px-8 md:px-20 max-w-7xl mx-auto overflow-y-auto pb-24 overscroll-contain touch-pan-y">
+      <div className="relative z-30 h-full w-full flex flex-col pt-12 md:pt-20 px-6 md:px-20 max-w-7xl mx-auto overflow-y-auto pb-24 overscroll-contain touch-pan-y">
         
         {/* Top Nav */}
         <div className="flex justify-between items-start w-full">
@@ -132,21 +132,15 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
           <ApparateText delay={0.2} className="h-[80px] md:h-[110px] flex items-center">
             <style>{`
               @keyframes bioPulse {
-                0%, 100% { 
-                  text-shadow: 0 0 20px ${specimen.hex}20, 0 0 10px ${specimen.hex}10; 
-                  opacity: 1; 
-                }
-                50% { 
-                  text-shadow: 0 0 50px ${specimen.hex}60, 0 0 30px ${specimen.hex}40; 
-                  opacity: 0.9; 
-                }
+                0%, 100% { text-shadow: 0 0 15px ${specimen.hex}40, 0 0 5px ${specimen.hex}20; opacity: 1; }
+                50% { text-shadow: 0 0 45px ${specimen.hex}90, 0 0 20px ${specimen.hex}60; opacity: 1; }
               }
             `}</style>
             <span 
               className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] will-change-[text-shadow,opacity]"
               style={{ 
                 color: specimen.hex,
-                animation: 'bioPulse 6s ease-in-out infinite' 
+                animation: 'bioPulse 4s ease-in-out infinite' 
               }} 
             >
               {specimen.code}
@@ -227,7 +221,7 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0 }}
               transition={{ duration: 0.7, ease:[0.16, 1, 0.3, 1] }}
-              className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-[#020202]/10 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-40 overflow-y-auto overscroll-contain touch-pan-y p-6 md:p-12 lg:p-20 will-change-[transform,opacity]"
+              className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-[#020202]/10 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-40 overflow-y-auto overscroll-contain touch-pan-y pt-12 md:pt-20 px-6 md:px-12 lg:px-20 pb-12 lg:pb-20 will-change-[transform,opacity]"
             >
             <h3 className="text-2xl font-light tracking-[0.3em] text-white mb-12 uppercase font-[var(--font-archivo)] mt-12">
               System <span className="text-white/30">Architecture</span>
@@ -242,12 +236,18 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
               </div>
             </div>
 
-            <div className="relative z-10">
-              <div className="text-[10px] text-white/40 font-mono tracking-widest uppercase mb-8 border-b border-white/10 pb-2">Compound Specifications</div>
-              <div className="space-y-8 font-light text-sm leading-relaxed text-white/70 font-[var(--font-archivo)]">
-                <div><span className="block text-xs font-mono tracking-widest text-white mb-1">01. SELF-CROSSLINKING MATRIX</span> UV-curable, self-crosslinking bio-polymers. Guarantees "optical fire" without the milky haze.</div>
-                <div><span className="block text-xs font-mono tracking-widest text-white mb-1">02. NANO-STABILIZATION</span> Advanced dispersants prevent clumping, resulting in a mirror-like surface with unparalleled distinctness of image.</div>
-                <div><span className="block text-xs font-mono tracking-widest text-white mb-1">03. PHOTONIC INITIATORS</span> Aqueous-dispersible UV initiators provide "Infinite Open Time", followed by instant deep-curing.</div>
+            <div className="space-y-10 font-light text-sm leading-relaxed text-white/70 font-[var(--font-archivo)]">
+              <div>
+                <span className="block text-[11px] font-mono tracking-[0.3em] text-white mb-2">MOLECULAR BINDING</span>
+                No chalk. No fillers. A pure, self-weaving polymer that cures like a sheet of optical glass.
+              </div>
+              <div>
+                <span className="block text-[11px] font-mono tracking-[0.3em] text-white mb-2">NANO-STABILITY</span>
+                Pigments suspended below 5 microns. They do not clump, they do not settle. The result is a true, unbroken mirror finish.
+              </div>
+              <div>
+                <span className="block text-[11px] font-mono tracking-[0.3em] text-white mb-2">ON-DEMAND SOLIDIFICATION</span>
+                Work the material as long as you need. Cure it instantly with UV light. Zero wait times, zero color-shift.
               </div>
             </div>
           </motion.div>
