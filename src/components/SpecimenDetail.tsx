@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Specimen } from '@/lib/specimens'
 import { cn, getLumaOpacity } from '@/lib/utils'
-import MagneticText from './MagneticText'
 import { useResonance } from '@/hooks/useResonance'
 
 // --- ORGANIC APPARITION TEXT COMPONENT ---
@@ -129,13 +128,29 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
         {/* Content Block (Replaced Typewriter with ApparateText) */}
         <div className="flex-1 flex flex-col justify-center max-w-xl mt-12">
           
-          {/* Phase 3: Ultra-Luxury Feature 1 - Magnetic Kinematic Typography */}
-          <ApparateText delay={0.2} className="h-[80px] md:h-[110px]">
-            <MagneticText 
-              text={specimen.code} 
-              className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] drop-shadow-2xl"
-              color={specimen.hex}
-            />
+          {/* Bioluminescent Pulse - Inner Light breathing from within */}
+          <ApparateText delay={0.2} className="h-[80px] md:h-[110px] flex items-center">
+            <style>{`
+              @keyframes bioPulse {
+                0%, 100% { 
+                  text-shadow: 0 0 20px ${specimen.hex}20, 0 0 10px ${specimen.hex}10; 
+                  opacity: 1; 
+                }
+                50% { 
+                  text-shadow: 0 0 50px ${specimen.hex}60, 0 0 30px ${specimen.hex}40; 
+                  opacity: 0.9; 
+                }
+              }
+            `}</style>
+            <span 
+              className="text-5xl sm:text-7xl md:text-9xl font-light tracking-[0.1em] uppercase font-[var(--font-archivo)] will-change-[text-shadow,opacity]"
+              style={{ 
+                color: specimen.hex,
+                animation: 'bioPulse 6s ease-in-out infinite' 
+              }} 
+            >
+              {specimen.code}
+            </span>
           </ApparateText>
 
           <ApparateText delay={0.4} className="h-[30px] mt-2">

@@ -34,8 +34,8 @@ function DecryptText({ text, isHovering, onComplete }: { text: string; isHoverin
         onComplete()
       }
 
-      iterations += 1 
-    }, 30) // Faster animation speed
+      iterations += 3
+    }, 12)
 
     return () => clearInterval(interval)
   }, [isHovering, text, onComplete])
@@ -166,23 +166,20 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
         }
       `}</style>
 
-      {/* AMBIENT BACKGROUND BLOOM (Gentle Smoke Pulse) */}
+      {/* AMBIENT BACKGROUND BLOOM (HDR Double Gradient) */}
       <motion.div 
-        className="fixed inset-0 z-0 transition-all duration-1000 pointer-events-none mix-blend-screen"
+        className="fixed inset-0 z-0 transition-all duration-700 pointer-events-none"
         animate={hoveredHex ? { 
-          scale: [1, 1.15, 1],
-          opacity: (() => { const b = getLumaOpacity(hoveredHex, 0.75); return [b, b * 0.765, b] })(),
-        } : {}}
-        transition={{ 
-          duration: 8, 
-          repeat: Infinity, 
-          ease: "easeInOut" 
-        }}
+          scale: [1, 1.1, 1],
+        } : { opacity: 0 }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         style={{
-          opacity: hoveredHex ? getLumaOpacity(hoveredHex, 0.75) : 0, 
+          mixBlendMode: 'screen',
           background: hoveredHex 
-            ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 70%)` 
+            ? `radial-gradient(circle at 50% 50%, ${hoveredHex} 0%, transparent 40%), 
+               radial-gradient(circle at 50% 50%, ${hoveredHex}40 0%, transparent 80%)`
             : 'transparent',
+          opacity: hoveredHex ? getLumaOpacity(hoveredHex, 0.6) : 0
         } as React.CSSProperties}
       />
 
