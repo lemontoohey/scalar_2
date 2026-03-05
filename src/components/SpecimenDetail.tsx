@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import { Specimen } from '@/lib/specimens'
 import { cn, getLumaOpacity } from '@/lib/utils'
 import { useResonance } from '@/hooks/useResonance'
-import { useColor } from '@/context/ColorContext'
 
 // --- ORGANIC APPARITION TEXT COMPONENT ---
 function ApparateText({ children, delay = 0, className, style }: { children: React.ReactNode, delay?: number, className?: string, style?: React.CSSProperties }) {
@@ -30,21 +29,18 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
   const [phase, setPhase] = useState<'clearing' | 'idle' | 'flooding'>('clearing')
   const [selectedVariant, setSelectedVariant] = useState<'soup' | 'rothko' | null>(null)
   const [showTechStack, setShowTechStack] = useState(false)
-  const { setGlobalColor } = useColor()
   
   // Phase 4: Ultra-Luxury Feature 2 - Generative Resonance Soundscape
   useResonance(specimen.hex, true)
 
   // Timeline Sequence
   useEffect(() => {
-    setGlobalColor(specimen.hex)
     // Mist finishes apparating around 3.5s, text settles around 2s
     const t = setTimeout(() => setPhase('idle'), 3500) 
     return () => {
       clearTimeout(t)
-      setGlobalColor(null)
     }
-  }, [specimen.hex, setGlobalColor])
+  }, [])
 
   const handleAddToCart = () => {
     if (!selectedVariant) return

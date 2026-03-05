@@ -44,61 +44,80 @@ export default function ThermalCursor() {
      return Math.max(1 - v / 3000, 0.6); // Gentle squash
   });
   
+  const [isHovering, setIsHovering] = useState(false);
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isVisible) setIsVisible(true);
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      const active =
+        t.tagName === 'BUTTON' ||
+        t.tagName === 'A' ||
+        !!t.closest('button') ||
+        !!t.closest('a') ||
+        t.hasAttribute('data-thermal-hover');
+      setIsHovering(active);
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseover', handleMouseOver);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseover', handleMouseOver);
+    };
   }, [isVisible, mouseX, mouseY]);
 
   if (isTouch || !isVisible) return null;
 
-  const isActive = !!activeHex;
+  const isPigmentMode = !!activeHex;
   const targetColor = activeHex || '#A80000';
 
   return (
     <div className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-screen">
-       {/* LAYER 3: TOP MIST (SCALAR RED / PIGMENT) - The Laggard */}
+       {/* LAYER 3: TOP MIST (The Pigment Body) */}
        <motion.div
         style={{ x: x3, y: y3, scale }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-          width: isActive ? 100 : 30,
-          height: isActive ? 100 : 30,
-          opacity: isActive ? 0.6 : 0.4,
-          backgroundColor: targetColor, 
-          filter: 'blur(15px)'
+          // IF Pigment: Stay tight (40px). IF Generic Hover: Bloom (100px). IF Idle: Tiny (12px)
+          width: isPigmentMode ? 40 : (isHovering ? 100 : 30),
+          height: isPigmentMode ? 40 : (isHovering ? 100 : 30),
+          opacity: isPigmentMode ? 0.9 : (isHovering ? 0.5 : 0.3), // More solid when it's a pigment
+          backgroundColor: targetColor,
+          filter: isPigmentMode ? 'blur(10px)' : 'blur(20px)' // Sharper edge for pigment
         }}
-        transition={{ duration: 0.8, ease: "circOut" }}
+        transition={{ duration: 0.6, ease: "circOut" }} 
        />
 
-       {/* LAYER 2: MIDDLE MIST (AZO/ORANGE) - Bridge Color */}
+       {/* LAYER 2: MIDDLE MIST (Bridge Color) */}
        <motion.div
         style={{ x: x2, y: y2, scale }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-            width: isActive ? 60 : 20,
-            height: isActive ? 60 : 20,
-            opacity: 0.5,
-            backgroundColor: isActive ? targetColor : '#D98700', 
-            filter: 'blur(8px)'
-        }}
-        transition={{ duration: 0.6 }}
-       />
-
-       {/* LAYER 1: BOTTOM/CORE (LIGHTBULB WHITE) - The Lead */}
-       <motion.div
-        style={{ x: x1, y: y1, scale }}
-        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80"
-        animate={{
-            width: isActive ? 20 : 6,
-            height: isActive ? 20 : 6,
-            filter: 'blur(4px)'
+            width: isPigmentMode ? 25 : (isHovering ? 60 : 20),
+            height: isPigmentMode ? 25 : (isHovering ? 60 : 20),
+            opacity: 0.6,
+            backgroundColor: isPigmentMode ? targetColor : '#D98700', 
+            filter: isPigmentMode ? 'blur(6px)' : 'blur(10px)' // Tighter blur for pigment
         }}
         transition={{ duration: 0.4 }}
+       />
+
+       {/* LAYER 1: CORE (White Hot Anchor) */}
+       <motion.div
+        style={{ x: x1, y: y1, scale }}
+        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/90"
+        animate={{
+            width: isPigmentMode ? 10 : (isHovering ? 15 : 6),
+            height: isPigmentMode ? 10 : (isHovering ? 15 : 6),
+            filter: 'blur(3px)'
+        }}
+        transition={{ duration: 0.2 }}
        />
     </div>
   )
