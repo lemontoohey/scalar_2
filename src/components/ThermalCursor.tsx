@@ -28,8 +28,8 @@ export default function ThermalCursor() {
     [xVelocity, yVelocity],
     ([xv, yv]) => {
       const velocity = Math.hypot(xv as number, yv as number);
-      // Map 0 -> 1500 velocity to scale 1 -> 0.6
-      const range = Math.min(velocity / 1500, 1); 
+      // Map 0 -> 2500 velocity to scale 1 -> 0.6
+      const range = Math.min(velocity / 2500, 1); 
       return 1 - (range * 0.4);
     }
   );

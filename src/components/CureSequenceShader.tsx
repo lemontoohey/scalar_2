@@ -36,54 +36,56 @@ const fragmentShader = `
   }
   
   float fbm(vec2 p) {
-    float f = smoothNoise(p);
-    f += 0.5 * smoothNoise(p * 2.0);
-    f += 0.25 * smoothNoise(p * 4.0);
-    return f / 1.75;
+    // Rotate to reduce axial bias
+    mat2 m = mat2(0.8, 0.6, -0.6, 0.8);
+    float f = 0.0;
+    f += 0.500 * smoothNoise(p); p *= m * 2.02;
+    f += 0.250 * smoothNoise(p); p *= m * 2.03;
+    f += 0.125 * smoothNoise(p);
+    return f / 0.9375;
   }
   
   void main() {
-    vec2 center = vec2(0.5, 0.5);
-    float dist = length(vUv - center);
-    
-    // TIGHTENED SPREAD: Reduced to tightly hug text
-    float singularity = 1.0 - smoothstep(0.05, 0.28, dist);
-    
-    // SUGGESTION 1: DEPTH - Dual layers moving opposite directions for volume
-    float tex1 = fbm(vUv * 1.5 + uTime * uSpeed);
-    float tex2 = fbm(vUv * 3.0 - uTime * (uSpeed * 0.5)); // Reverse flow
-    float tex = mix(tex1, tex2, 0.5); 
-    
-    float mass = singularity * (0.8 + 0.2 * tex);
-    
-    // Dark Red Rest State vs Hot White Peak
-    const vec3 uColorRest = vec3(0.27, 0.0, 0.0);
-    const vec3 uColorPeak = vec3(1.0, 0.988, 0.91);
-    
-    // Ignition curve
-    float ignitionHeat = smoothstep(0.0, 0.5, uProgress) * (1.0 - smoothstep(0.5, 1.0, uProgress));
-    
-    // SUGGESTION 2: RESONANCE - Subtle Chromatic Shift on Peak
-    // Shift color mixing slightly for R vs GB channels during high heat
-    vec3 hotCoreColor;
-    hotCoreColor.r = mix(uColorRest.r, uColorPeak.r, ignitionHeat);
-    hotCoreColor.gb = mix(uColorRest.gb, uColorPeak.gb, ignitionHeat * 0.95); // Slight lag
-    
-    vec3 finalColor = mix(uColorRest, hotCoreColor, mass);
-    
-    // Fade out logic
-    float recession = 1.0 - smoothstep(0.5, 1.0, uProgress);
-    
-    // SUGGESTION 3: TEXTURE DISSOLVE
-    // As it fades, eat away at the alpha using noise for a smoke-like disappearance
-    float dissolve = smoothstep(0.0, 0.4, recession + tex * 0.3); 
-    
-    // Fade out completely by the very end
-    float finalFade = 1.0 - smoothstep(0.9, 1.0, uProgress);
-    
-    float alpha = mass * (0.4 + 0.6 * recession) * dissolve * finalFade;
-    
-    gl_FragColor = vec4(finalColor, alpha);
+      vec2 center = vec2(0.5, 0.5);
+      float dist = length(vUv - center);
+      
+      // TIGHTENED SPREAD: Reduced singularity
+      float singularity = 1.0 - smoothstep(0.05, 0.32, dist); // Expanded slightly for 'lungs'
+  
+      // DOMAIN WARPING (The Soul)
+      // Instead of simple noise, we warp the coordinate space recursively.
+      vec2 q = vec2(0.);
+      q.x = fbm(vUv * 2.0 + 0.1 * uTime * uSpeed);
+      q.y = fbm(vUv * 2.0 + vec2(1.0));
+  
+      vec2 r = vec2(0.);
+      r.x = fbm(vUv * 2.0 + 1.0 * q + vec2(1.7, 9.2) + 0.15 * uTime * uSpeed);
+      r.y = fbm(vUv * 2.0 + 1.0 * q + vec2(8.3, 2.8) + 0.126 * uTime * uSpeed);
+  
+      float f = fbm(vUv + r);
+      
+      // Deep red biologic tint (SCALAR RED: ~0.65 red, low green/blue)
+      // Darker, richer base than before
+      vec3 baseColor = vec3(0.1, 0.0, 0.0); // Void
+      vec3 bloodColor = vec3(0.5, 0.02, 0.05); // Oxygenated
+      vec3 hotColor = vec3(1.0, 0.9, 0.8); // White Heat
+  
+      // Color mixing based on warping density
+      vec3 finalColor = mix(baseColor, bloodColor, clamp((f*f)*4.0, 0.0, 1.0));
+      finalColor = mix(finalColor, hotColor, clamp(length(q) - 0.2, 0.0, 1.0) * smoothstep(0.0, 0.5, uProgress));
+  
+      // Ignition Intensity
+      // During ignition, the warp drives the light intensity
+      float ignitionHeat = smoothstep(0.0, 0.4, uProgress) * (1.0 - smoothstep(0.5, 1.0, uProgress));
+      finalColor += hotColor * ignitionHeat * f;
+  
+      float alpha = singularity * (f * 1.5 + 0.2);
+      
+      // Recession Fade
+      float recession = 1.0 - smoothstep(0.6, 1.0, uProgress);
+      alpha *= recession;
+  
+      gl_FragColor = vec4(finalColor, alpha);
   }
 `
 

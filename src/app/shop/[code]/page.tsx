@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { SPECIMEN_DATA } from '@/lib/specimens'
 import ShopScreen from '@/components/ShopScreen'
+import PrismaticLoader from '@/components/PrismaticLoader'
 
 export function generateStaticParams() {
   return SPECIMEN_DATA.map((s) => ({
@@ -18,7 +19,7 @@ export default async function ShopPage({ params }: { params: Promise<{ code: str
   }
 
   return (
-    <Suspense fallback={<div className="text-white text-center pt-20">Loading...</div>}>
+    <Suspense fallback={<PrismaticLoader />}>
       <ShopScreen specimen={specimen} />
     </Suspense>
   )

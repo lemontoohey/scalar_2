@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useVelocity, useTransform, useSpring } from 'framer-motion'
 import Link from 'next/link'
 import { SPECIMEN_DATA, Specimen } from '@/lib/specimens'
 import { cn } from '@/lib/utils'
@@ -146,6 +146,11 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
   const dataset = SPECIMEN_DATA.filter((s) => s.category === category)
   const[hoveredHex, setHoveredHex] = useState<string | null>(null)
   
+  const { scrollY } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
+  const skewY = useTransform(scrollVelocity, [-2000, 2000], [2, -2]); 
+  const skewYSpring = useSpring(skewY, { mass: 0.1, stiffness: 50, damping: 10 });
+
   return (
     <motion.div 
       className="fixed inset-0 z-[70] bg-[#030F08] w-full h-full overflow-y-auto overscroll-contain touch-pan-y"
@@ -187,7 +192,10 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
         </div>
 
         {/* SPECIMEN GRID */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-24">
+        <motion.div 
+          style={{ skewY: skewYSpring, transformOrigin: "center center" }}
+          className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-24"
+        >
           {dataset.map((specimen, idx) => (
              <div key={specimen.id}>
                <Card 
@@ -198,7 +206,7 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
                />
              </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </motion.div>
   )

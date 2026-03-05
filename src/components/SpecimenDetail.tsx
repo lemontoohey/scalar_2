@@ -218,16 +218,24 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
             </button>
           </ApparateText>
 
-          <ApparateText delay={1.0} className="mt-12 w-fit">
+          <ApparateText delay={1.0} className="mt-12 w-full max-w-sm">
             <button 
               disabled={!selectedVariant || phase === 'flooding'}
               onClick={handleAddToCart}
-              className={cn("group relative min-h-[44px] px-8 py-4 border transition-all duration-300",
+              className={cn("group relative min-h-[44px] w-full px-8 py-4 border transition-all duration-300 overflow-hidden",
                 !selectedVariant ? "border-white/10 opacity-50 cursor-not-allowed" : "border-white/20 hover:border-white/80 hover:bg-white/5"
               )}
               aria-label={selectedVariant ? `Add ${specimen.code} with ${selectedVariant.toUpperCase()} to cart` : 'Select a system architecture first'}
             >
-              <span className={cn("text-[11px] tracking-[0.3em] font-mono transition-colors duration-300",
+              {/* The "Syringe" Liquid Layer */}
+              <motion.div 
+                className="absolute inset-y-0 left-0 z-0 bg-white/10 mix-blend-overlay"
+                initial={{ width: "0%" }}
+                animate={phase === 'flooding' ? { width: "100%" } : { width: "0%" }}
+                transition={{ duration: 1.5, ease: [0.65, 0, 0.35, 1] }}
+              />
+
+              <span className={cn("relative z-10 text-[11px] tracking-[0.3em] font-mono transition-colors duration-300",
                 !selectedVariant ? "text-white/30" : "text-white/70 group-hover:text-white"
               )}>
                 {selectedVariant ? `[ ADD_TO_CART : ${selectedVariant.toUpperCase()} ]` : '[ SELECT_SYSTEM_FIRST ]'}
