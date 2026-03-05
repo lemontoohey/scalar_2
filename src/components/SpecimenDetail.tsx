@@ -175,10 +175,10 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
             <button 
               onClick={() => setSelectedVariant('rothko')}
               className={cn("w-full text-left min-h-[44px] p-4 border transition-all duration-300 relative overflow-hidden group", selectedVariant === 'rothko' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30")}
-              aria-label="Select Rothko's UV-Flash Architecture"
+              aria-label="Select Rothko&apos;s UV-Flash Architecture"
             >
               {selectedVariant === 'rothko' && <div className="absolute inset-0 opacity-20" style={{ backgroundColor: specimen.hex }} />}
-              <h4 className="text-sm font-mono tracking-widest text-white mb-2 relative z-10">[ SYS_02 : ROTHKO'S UV-FLASH ]</h4>
+              <h4 className="text-sm font-mono tracking-widest text-white mb-2 relative z-10">{`[ SYS_02 : ROTHKO'S UV-FLASH ]`}</h4>
               <p className="text-xs text-white/60 font-light leading-relaxed relative z-10">Achieve a 50-layer stack in one session. "Infinite Open Time" to work the material, followed by "Instant Solidification" via UV-light for glass-like clarity.</p>
             </button>
           </ApparateText>

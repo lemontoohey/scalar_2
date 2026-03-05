@@ -68,6 +68,12 @@ export function useResonance(hexColor: string, isActive: boolean) {
         if (gainNode.current && audioCtx.current) {
             gainNode.current.gain.setTargetAtTime(0, audioCtx.current.currentTime, 0.1);
         }
+        oscRef.current?.stop();
+        oscRef.current?.disconnect();
+        audioCtx.current?.close();
+        audioCtx.current = null;
+        gainNode.current = null;
+        oscRef.current = null;
     };
   }, [hexColor, isActive]);
 }

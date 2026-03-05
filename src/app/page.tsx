@@ -40,6 +40,15 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const t = setTimeout(() => {
       setShowButtons(true)
       playSubBass()
