@@ -16,27 +16,29 @@ export default function Home() {
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
       }
-      
       const ctx = audioContextRef.current
+
       const osc = ctx.createOscillator()
       const harmonic = ctx.createOscillator()
       const gain = ctx.createGain()
-      
+
+      const baseFreq = 60
       osc.type = 'sine'
-      osc.frequency.setValueAtTime(60, ctx.currentTime)
+      osc.frequency.setValueAtTime(baseFreq, ctx.currentTime)
       osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 1.5)
+
       harmonic.type = 'sine'
-      harmonic.frequency.setValueAtTime(120, ctx.currentTime)  // First harmonic for laptop speakers
+      harmonic.frequency.setValueAtTime(baseFreq * 2, ctx.currentTime)
       harmonic.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 1.5)
-      
+
       gain.gain.setValueAtTime(0, ctx.currentTime)
-      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.1)
+      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.1)
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0)
-      
+
       osc.connect(gain)
       harmonic.connect(gain)
       gain.connect(ctx.destination)
-      
+
       osc.start()
       harmonic.start()
       osc.stop(ctx.currentTime + 2.0)
@@ -59,7 +61,7 @@ export default function Home() {
     const t = setTimeout(() => {
       setShowButtons(true)
       playSubBass()
-    }, 3200)
+    }, 3500)
     return () => clearTimeout(t)
   },[playSubBass])
 
@@ -104,7 +106,7 @@ export default function Home() {
           className="absolute bottom-[25vh] flex justify-center gap-16 w-full pointer-events-auto z-20"
           initial={{ opacity: 0, y: 15, scale: 0.9, filter: 'blur(12px)' }}
           animate={showButtons ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' } : { opacity: 0, y: 15, scale: 0.9, filter: 'blur(12px)' }}
-          transition={{ duration: 2.5, ease:[0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.5, ease:[0.16, 1, 0.3, 1] }}
         >
           <Link
             href="/organic"

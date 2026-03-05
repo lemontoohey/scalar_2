@@ -109,7 +109,7 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
           {/* White Scalar Back Button */}
           <Link 
             href={`/${specimen.category}`}
-            className="min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            className="min-h-[44px] min-w-[44px] flex items-center text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors"
             aria-label={`Back to ${specimen.category} Registry`} 
             data-thermal-hover="true"
           >

@@ -72,18 +72,24 @@ export function useResonance(hexColor: string, isActive: boolean) {
     return () => {
         window.removeEventListener('mousemove', handleInteract);
         window.removeEventListener('click', handleInteract);
-        if (gainNode.current && audioCtx.current) {
-            gainNode.current.gain.setTargetAtTime(0, audioCtx.current.currentTime, 0.1);
+        const ctx = audioCtx.current;
+        const gain = gainNode.current;
+        const osc = oscRef.current;
+        const harmonic = harmonicRef.current;
+        if (gain && ctx) {
+            gain.gain.setTargetAtTime(0, ctx.currentTime, 1.5);
         }
-        oscRef.current?.stop();
-        oscRef.current?.disconnect();
-        harmonicRef.current?.stop();
-        harmonicRef.current?.disconnect();
-        audioCtx.current?.close();
-        audioCtx.current = null;
-        gainNode.current = null;
-        oscRef.current = null;
-        harmonicRef.current = null;
+        setTimeout(() => {
+            osc?.stop();
+            osc?.disconnect();
+            harmonic?.stop();
+            harmonic?.disconnect();
+            ctx?.close();
+            if (audioCtx.current === ctx) audioCtx.current = null;
+            if (gainNode.current === gain) gainNode.current = null;
+            if (oscRef.current === osc) oscRef.current = null;
+            if (harmonicRef.current === harmonic) harmonicRef.current = null;
+        }, 1600);
     };
   }, [hexColor, isActive]);
 }

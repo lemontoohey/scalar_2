@@ -167,7 +167,7 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
 
       <div className="relative z-30 w-full px-6 md:px-20 py-6">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-6 pb-4 md:pt-12 md:pb-10 mb-8 md:mb-16 border-b border-white/[0.05] bg-[#040404]/90 backdrop-blur-2xl flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
+        <div className="sticky top-0 z-50 pt-8 pb-6 mb-12 md:mb-16 border-b border-white/10 bg-black/20 backdrop-blur-[50px] shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex flex-col md:flex-row items-center justify-center gap-4">
           <Link 
             href="/"
             data-thermal-hover="true"
