@@ -20,7 +20,6 @@ const fragmentShader = `
   
   varying vec2 vUv;
   
-  // -- NOISE FUNCTIONS --
   float noise(vec2 p) {
     return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
   }
@@ -36,53 +35,64 @@ const fragmentShader = `
     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
   }
   
-  // Recursive Noise (Domain Warping)
+  // Rotate to reduce axial bias (The Ferrofluid base)
   float fbm(vec2 p) {
+    mat2 m = mat2(0.8, 0.6, -0.6, 0.8);
     float f = 0.0;
-    f += 0.500 * smoothNoise(p); p *= 2.01;
-    f += 0.250 * smoothNoise(p); p *= 2.03;
+    f += 0.500 * smoothNoise(p); p *= m * 2.02;
+    f += 0.250 * smoothNoise(p); p *= m * 2.03;
     f += 0.125 * smoothNoise(p);
-    return f;
+    return f / 0.9375;
   }
   
   void main() {
     vec2 center = vec2(0.5, 0.5);
-    // 1. Calculate fundamental distance
     float dist = length(vUv - center);
     
-    // 2. THE IMPERFECTION (Organic Wobbly Edge)
-    // We disturb the UV lookup for the edge calculation slightly
-    float distortion = fbm(vUv * 3.0 - uTime * 0.1); 
-    float organicDist = dist - (distortion * 0.05); // +/- 5% imperfection
+    // 1. THE ORGANIC MIST EDGE
+    // We disturb the distance calculation with noise so it isn't a perfect circle.
+    float edgeNoise = fbm(vUv * 3.0 - uTime * 0.1); 
+    float organicDist = dist - (edgeNoise * 0.06); // Wobbles the edge by +/- 6%
 
-    // 3. THE MISTY CONTAINER (Hugs text at ~0.35 radius)
-    // 0.28 = clear core, 0.45 = fade out. Anything outside 0.45 is strictly transparent.
-    float containerMask = 1.0 - smoothstep(0.28, 0.45, organicDist); 
+    // 2. THE BLURRY VIGNETTE
+    // 0.22 = solid core. 0.48 = extreme soft fade to invisible mist.
+    // Anything past 0.48 is completely transparent, preventing hard square edges.
+    float mistyEdge = 1.0 - smoothstep(0.22, 0.48, organicDist); 
 
-    // 4. THE FLUID INTERNAL WARP (The visual texture)
-    vec2 q = vec2(fbm(vUv + uTime * 0.05));
-    float flow = fbm(vUv * 3.0 + q + uTime * 0.1);
-    
-    // 5. COLOR MAPPING (Deep Red -> Oxygenated Red -> White Heat)
-    vec3 deepRed = vec3(0.2, 0.0, 0.05);
-    vec3 brightRed = vec3(0.8, 0.05, 0.05);
-    vec3 boneWhite = vec3(1.0, 0.96, 0.9);
-    
-    // Animate visual density with progress
-    float ignition = smoothstep(0.0, 0.4, uProgress) * (1.0 - smoothstep(0.6, 1.0, uProgress));
-    
-    vec3 fluidColor = mix(deepRed, brightRed, flow);
-    // Flash white ONLY in the hottest flow channels during ignition
-    fluidColor = mix(fluidColor, boneWhite, smoothstep(0.6, 1.0, flow) * ignition);
+    // 3. DOMAIN WARPING (The Ferrofluid Soul)
+    // We warp the coordinate space recursively to create folding tension.
+    vec2 q = vec2(0.);
+    q.x = fbm(vUv * 2.0 + 0.1 * uTime * uSpeed);
+    q.y = fbm(vUv * 2.0 + vec2(1.0));
 
-    // 6. FINAL ALPHA COMPOSITE
-    // Must be invisible at the start/end (recession) and constrained by the container
-    float recession = 1.0 - smoothstep(0.85, 1.0, uProgress);
-    
-    // Combine: The container shape * The Flow Texture * The Fade timer
-    float alpha = containerMask * (flow * 0.5 + 0.5) * recession;
+    vec2 r = vec2(0.);
+    r.x = fbm(vUv * 2.0 + 1.0 * q + vec2(1.7, 9.2) + 0.15 * uTime * uSpeed);
+    r.y = fbm(vUv * 2.0 + 1.0 * q + vec2(8.3, 2.8) + 0.126 * uTime * uSpeed);
 
-    gl_FragColor = vec4(fluidColor, alpha);
+    float f = fbm(vUv + r);
+    
+    // 4. COLOR MAPPING (SCALAR RED)
+    vec3 baseColor = vec3(0.1, 0.0, 0.0); // Void
+    vec3 bloodColor = vec3(0.5, 0.02, 0.05); // Oxygenated
+    vec3 hotColor = vec3(1.0, 0.9, 0.8); // White Heat
+
+    // Color mixing based on warping density
+    vec3 finalColor = mix(baseColor, bloodColor, clamp((f*f)*4.0, 0.0, 1.0));
+    finalColor = mix(finalColor, hotColor, clamp(length(q) - 0.2, 0.0, 1.0) * smoothstep(0.0, 0.5, uProgress));
+
+    // Ignition Intensity
+    float ignitionHeat = smoothstep(0.0, 0.4, uProgress) * (1.0 - smoothstep(0.5, 1.0, uProgress));
+    finalColor += hotColor * ignitionHeat * f;
+
+    // 5. FINAL ALPHA COMPOSITE
+    // Combine the Ferrofluid texture (f) with the Misty Edge mask
+    float alpha = mistyEdge * (f * 1.6 + 0.1);
+    
+    // Recession Fade (Fades out seamlessly at the end)
+    float recession = 1.0 - smoothstep(0.6, 1.0, uProgress);
+    alpha *= recession;
+
+    gl_FragColor = vec4(finalColor, alpha);
   }
 `
 
