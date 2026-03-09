@@ -63,8 +63,8 @@ export function computeSpectralLayers(hex: string): { core: string; corona: stri
   const lumAtm = Math.max(l * 0.4, 0.02);
   const satCor = s;
   const lumCor = Math.min(l * 1.2, 0.85);
-  const satCore = Math.max(s * 0.2, 0);
-  const lumCore = 0.94;
+  const satCore = s;
+  const lumCore = Math.min(l + 0.25, 0.85);
 
   const hslToHex = (hVal: number, sVal: number, lVal: number): string => {
     const hue2rgb = (p: number, q: number, t: number) => {

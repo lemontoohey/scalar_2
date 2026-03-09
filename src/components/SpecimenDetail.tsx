@@ -111,9 +111,9 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
           {/* White Scalar Back Button */}
           <Link 
             href={`/${specimen.category}`}
-            className="min-h-[44px] min-w-[44px] flex items-center text-[11px] md:text-[13px] tracking-[0.3em] text-[#FCFBF8]/40 hover:text-white uppercase font-mono transition-colors"
-            aria-label={`Back to ${specimen.category} Registry`} 
             data-thermal-hover="true"
+            className="min-h-[44px] flex items-center text-lg md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            aria-label={`Back to ${specimen.category} Registry`} 
           >
             SCALAR
           </Link>
@@ -187,27 +187,27 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
             <button 
               onClick={() => setSelectedVariant('soup')}
               className={cn(
-                "w-full text-left min-h-[44px] p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
-                selectedVariant === 'soup' && `border-[${specimen.hex}] bg-white/10`
+                "w-full text-left min-h-[44px] p-6 border transition-all duration-300 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] group cursor-pointer",
+                selectedVariant === 'soup' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30 hover:bg-white/[0.05] hover:translate-x-2"
               )}
               aria-label="Select Sub-5 Micron Soup Architecture"
             >
               {selectedVariant === 'soup' && <div className="absolute inset-0 opacity-20" style={{ backgroundColor: specimen.hex }} />}
               <h4 className="text-sm font-mono tracking-widest text-white mb-2 relative z-10">[ SYS_01 : SUB-5 MICRON SOUP ]</h4>
-              <p className="text-xs text-white/60 font-light leading-relaxed relative z-10">Traditional binders replaced with self-crosslinking molecular suspension. Massive internal surface area yields unprecedented chroma and refractive depth.</p>
+              <p className="text-xs text-white/60 group-hover:text-white transition-colors font-light leading-relaxed relative z-10">Traditional binders replaced with self-crosslinking molecular suspension. Massive internal surface area yields unprecedented chroma and refractive depth.</p>
             </button>
 
             <button 
               onClick={() => setSelectedVariant('rothko')}
               className={cn(
-                "w-full text-left min-h-[44px] p-6 border transition-all duration-500 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.02)] hover:bg-white/[0.05] hover:border-white/20",
-                selectedVariant === 'rothko' && `border-[${specimen.hex}] bg-white/10`
+                "w-full text-left min-h-[44px] p-6 border transition-all duration-300 relative overflow-hidden backdrop-blur-2xl bg-white/[0.02] group cursor-pointer",
+                selectedVariant === 'rothko' ? `border-[${specimen.hex}] bg-white/10` : "border-white/10 hover:border-white/30 hover:bg-white/[0.05] hover:translate-x-2"
               )}
               aria-label="Select Rothko&apos;s UV-Flash Architecture"
             >
               {selectedVariant === 'rothko' && <div className="absolute inset-0 opacity-20" style={{ backgroundColor: specimen.hex }} />}
               <h4 className="text-sm font-mono tracking-widest text-white mb-2 relative z-10">{`[ SYS_02 : ROTHKO'S UV-FLASH ]`}</h4>
-              <p className="text-xs text-white/60 font-light leading-relaxed relative z-10">Achieve a 50-layer stack in one session. "Infinite Open Time" to work the material, followed by "Instant Solidification" via UV-light for glass-like clarity.</p>
+              <p className="text-xs text-white/60 group-hover:text-white transition-colors font-light leading-relaxed relative z-10">Achieve a 50-layer stack in one session. "Infinite Open Time" to work the material, followed by "Instant Solidification" via UV-light for glass-like clarity.</p>
             </button>
           </ApparateText>
 
@@ -253,12 +253,24 @@ export default function SpecimenDetail({ specimen }: { specimen: Specimen }) {
             />
             <motion.div 
               key="tech-stack-panel"
+              drag="x"
+              dragConstraints={{ left: 0, right: 300 }}
+              dragElastic={0.2}
+              onDragEnd={(e, info) => {
+                if (info.offset.x > 100 || info.velocity.x > 500) setShowTechStack(false);
+              }}
               initial={{ x: '100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '100%', opacity: 0 }}
               transition={{ duration: 0.7, ease:[0.16, 1, 0.3, 1] }}
               className="absolute top-0 right-0 w-full md:w-[45%] h-full bg-black/40 backdrop-blur-[40px] border-l border-white/10 shadow-[-20px_0_60px_rgba(0,0,0,0.8)] z-40 overflow-y-auto overscroll-contain touch-pan-y p-12 md:p-20 will-change-[transform,opacity]"
             >
+            <button 
+              onClick={() => setShowTechStack(false)} 
+              className="absolute top-6 right-6 min-h-[44px] min-w-[44px] text-white/40 hover:text-white font-mono text-[10px] tracking-widest flex items-center justify-center transition-colors"
+            >
+              [ X ]
+            </button>
             <h3 className="text-2xl font-light tracking-[0.3em] text-white mb-12 uppercase font-[var(--font-archivo)]">
               System <span className="text-white/30">Architecture</span>
             </h3>

@@ -29,9 +29,9 @@ export default function ShopScreen({ specimen }: { specimen: Specimen }) {
       <div className="absolute top-12 left-12 z-[220]">
           <Link 
             href={`/specimen/${specimen.code}`}
-            className="min-h-[44px] min-w-[44px] flex items-center text-xl md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
-            aria-label={`Back to ${specimen.code} Specimen`}
             data-thermal-hover="true"
+            className="min-h-[44px] flex items-center text-lg md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
+            aria-label={`Back to ${specimen.code} Specimen`}
         >
           SCALAR
         </Link>

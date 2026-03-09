@@ -110,6 +110,10 @@ export function useResonance(hexColor: string, isActive: boolean) {
       }
     };
 
+    // Try to play instantly (works because the user clicked a Link to navigate here)
+    initAudio();
+
+    // Aggressive interaction capture as a fallback (for hard refreshes)
     const handleInteract = () => {
       initAudio();
       window.removeEventListener('mousemove', handleInteract);

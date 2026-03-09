@@ -176,19 +176,32 @@ export default function CollectionGrid({ category }: { category: 'organic' | 'in
 
       <div className="relative z-30 w-full px-6 md:px-20 py-6">
         {/* TOP NAVIGATION */}
-        <div className="sticky top-0 z-50 pt-8 pb-6 mb-12 md:mb-16 border-b border-white/10 bg-black/20 backdrop-blur-[50px] shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex flex-col md:flex-row items-center justify-center gap-4">
+        <div className="sticky top-0 z-50 pt-8 pb-6 mb-12 md:mb-16 border-b border-white/10 bg-[#040404]/80 backdrop-blur-[50px] flex flex-row items-center justify-between px-2">
+          
+          {/* SCALAR BACK BUTTON (Consistent top left) */}
           <Link 
             href="/"
             data-thermal-hover="true"
-            className="relative md:absolute md:left-0 md:top-1/2 md:-translate-y-1/2 min-h-[44px] flex items-center text-[12px] md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/40 hover:text-white uppercase font-[var(--font-archivo)] transition-all duration-300"
-            aria-label="Back to Scalar Home"
+            className="min-h-[44px] flex items-center text-lg md:text-2xl font-light tracking-[0.4em] text-[#FCFBF8]/60 hover:text-white uppercase font-[var(--font-archivo)] transition-colors"
           >
             SCALAR
           </Link>
-          <h2 className="text-2xl md:text-3xl font-light tracking-[0.3em] md:tracking-[0.4em] uppercase font-[var(--font-archivo)] flex items-center gap-3">
-            <span className="text-[#A80000] drop-shadow-[0_0_12px_rgba(168,0,0,0.3)]">{category}</span>
-            <span className="text-[#FCFBF8]/40 hidden md:inline">REGISTRY</span>
-          </h2>
+
+          {/* CATEGORY SWITCHER */}
+          <div className="flex items-center gap-3 md:gap-6 text-[10px] md:text-sm tracking-[0.2em] md:tracking-[0.3em] font-mono">
+            <Link 
+              href="/organic" 
+              className={cn("transition-colors min-h-[44px] flex items-center", category === 'organic' ? "text-[#A80000]" : "text-[#FCFBF8]/30 hover:text-white")}
+            >
+              [ ORGANIC ]
+            </Link>
+            <Link 
+              href="/inorganic" 
+              className={cn("transition-colors min-h-[44px] flex items-center", category === 'inorganic' ? "text-[#A80000]" : "text-[#FCFBF8]/30 hover:text-white")}
+            >
+              [ INORGANIC ]
+            </Link>
+          </div>
         </div>
 
         {/* SPECIMEN GRID */}
