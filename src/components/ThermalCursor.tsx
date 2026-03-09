@@ -21,18 +21,21 @@ export default function ThermalCursor() {
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  // CONFIG: High stiffness on hover (snap), lower on move (lag)
-  // Layer 1 (White Core) - Tight
-  const x1 = useSpring(mouseX, { damping: 30, stiffness: 400 });
-  const y1 = useSpring(mouseY, { damping: 30, stiffness: 400 });
+  // --- PHYSICS CONFIGURATION ---
+  // LAYER 1 (Core): Must feel instantaneous (1:1 with hardware mouse)
+  const spring1Config = { damping: 15, stiffness: 1200, mass: 0.1 };
+  const x1 = useSpring(mouseX, spring1Config);
+  const y1 = useSpring(mouseY, spring1Config);
 
-  // Layer 2 (Middle) - Subtle Lag
-  const x2 = useSpring(mouseX, { damping: 30, stiffness: 300 });
-  const y2 = useSpring(mouseY, { damping: 30, stiffness: 300 });
+  // LAYER 2 (Bridge): Micro-lag to create the trailing edge
+  const spring2Config = { damping: 20, stiffness: 800, mass: 0.2 };
+  const x2 = useSpring(mouseX, spring2Config);
+  const y2 = useSpring(mouseY, spring2Config);
 
-  // Layer 3 (Mist) - Visual Lag (only separates when moving fast)
-  const x3 = useSpring(mouseX, { damping: 40, stiffness: 200 });
-  const y3 = useSpring(mouseY, { damping: 40, stiffness: 200 });
+  // LAYER 3 (Mist): The aerodynamic wake (softest spring)
+  const spring3Config = { damping: 25, stiffness: 500, mass: 0.4 };
+  const x3 = useSpring(mouseX, spring3Config);
+  const y3 = useSpring(mouseY, spring3Config);
 
   useEffect(() => {
     const move = (e: MouseEvent) => {
@@ -58,49 +61,46 @@ export default function ThermalCursor() {
 
   return (
     <div className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-screen">
-       {/* LAYER 3: TOP (Red/Pigment) - The Main Bloom */}
+       {/* LAYER 3: TOP MIST (The Wake) */}
        <motion.div
-        style={{ x: x3, y: y3 }} // Heaviest lag
+        style={{ x: x3, y: y3 }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-          // EXPAND on hover to cover the other layers
-          width: isHovering ? 80 : 30,
-          height: isHovering ? 80 : 30,
-          // Solidify on hover
-          opacity: isHovering ? 1 : 0.4,
+          width: isHovering ? 90 : 25, // Slightly tighter max bloom
+          height: isHovering ? 90 : 25,
+          opacity: isHovering ? 0.9 : 0.4,
           backgroundColor: targetColor,
-          filter: isHovering ? 'blur(10px)' : 'blur(20px)'
+          filter: isHovering ? 'blur(15px)' : 'blur(8px)',
         }}
-        transition={{ duration: 0.5 }}
+        // Snappier transitions
+        transition={{ duration: 0.2, ease: "easeOut" }}
        />
 
-       {/* LAYER 2: MIDDLE (Azo Orange) - The Bridge */}
+       {/* LAYER 2: BRIDGE (Orange/Yellow oxide tint) */}
        <motion.div
         style={{ x: x2, y: y2 }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-          // CONTRACT/HIDE on hover (Assimilated into the bloom)
-          width: isHovering ? 0 : 20, 
-          height: isHovering ? 0 : 20,
-          opacity: isHovering ? 0 : 0.5,
-          backgroundColor: '#D98700',
-          filter: 'blur(8px)'
+          width: isHovering ? 50 : 16,
+          height: isHovering ? 50 : 16,
+          opacity: 0.6,
+          backgroundColor: isHovering ? targetColor : '#D98700',
+          filter: isHovering ? 'blur(10px)' : 'blur(5px)',
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.15, ease: "easeOut" }}
        />
 
-       {/* LAYER 1: BOTTOM (White Light) - The Spark */}
+       {/* LAYER 1: CORE (White Lightbulb - Absolute Precision) */}
        <motion.div
         style={{ x: x1, y: y1 }}
-        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/90"
+        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         animate={{
-          // SNAP to center of bloom on hover
-          width: isHovering ? 0 : 8,
-          height: isHovering ? 0 : 8,
-          opacity: isHovering ? 0 : 1, // Hides when solid bloom appears
-          filter: 'blur(3px)'
+          width: isHovering ? 0 : 5, // Tighter core
+          height: isHovering ? 0 : 5,
+          opacity: isHovering ? 0 : 1, 
+          filter: 'blur(1px)' // Sharper
         }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.1 }}
        />
     </div>
   )
