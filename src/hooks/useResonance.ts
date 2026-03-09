@@ -102,7 +102,10 @@ export function useResonance(hexColor: string, isActive: boolean) {
       }
 
       if (audioCtx.current?.state === 'suspended') {
-        audioCtx.current.resume();
+        audioCtx.current.resume().catch(() => {
+          // Autoplay blocked by browser. Handled gracefully;
+          // the handleInteract listeners will resume it.
+        });
       }
 
       if (masterGain.current && audioCtx.current) {
