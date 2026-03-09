@@ -47,7 +47,8 @@ const fragmentShader = `
   
   void main() {
       vec2 center = vec2(0.5, 0.5);
-      float dist = length(vUv - center);
+      // Multiply by 1.6 to shrink the overall size of the fluid boundary
+      float dist = length(vUv - center) * 1.6;
       
       // TIGHTENED SPREAD: Reduced singularity
       float singularity = 1.0 - smoothstep(0.05, 0.32, dist); // Expanded slightly for 'lungs'

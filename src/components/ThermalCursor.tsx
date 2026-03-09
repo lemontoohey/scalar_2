@@ -66,39 +66,38 @@ export default function ThermalCursor() {
         style={{ x: x3, y: y3 }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-          width: isHovering ? 90 : 25, // Slightly tighter max bloom
-          height: isHovering ? 90 : 25,
+          width: isHovering ? 32 : 25, // Restrained expansion
+          height: isHovering ? 32 : 25,
           opacity: isHovering ? 0.9 : 0.4,
           backgroundColor: targetColor,
-          filter: isHovering ? 'blur(15px)' : 'blur(8px)',
+          filter: isHovering ? 'blur(10px)' : 'blur(8px)',
         }}
-        // Snappier transitions
         transition={{ duration: 0.2, ease: "easeOut" }}
        />
 
-       {/* LAYER 2: BRIDGE (Orange/Yellow oxide tint) */}
+       {/* LAYER 2: BRIDGE */}
        <motion.div
         style={{ x: x2, y: y2 }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
         animate={{
-          width: isHovering ? 50 : 16,
-          height: isHovering ? 50 : 16,
-          opacity: 0.6,
+          width: isHovering ? 20 : 16,
+          height: isHovering ? 20 : 16,
+          opacity: isHovering ? 0.8 : 0.6,
           backgroundColor: isHovering ? targetColor : '#D98700',
-          filter: isHovering ? 'blur(10px)' : 'blur(5px)',
+          filter: isHovering ? 'blur(6px)' : 'blur(5px)',
         }}
         transition={{ duration: 0.15, ease: "easeOut" }}
        />
 
-       {/* LAYER 1: CORE (White Lightbulb - Absolute Precision) */}
+       {/* LAYER 1: CORE */}
        <motion.div
         style={{ x: x1, y: y1 }}
         className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         animate={{
-          width: isHovering ? 0 : 5, // Tighter core
-          height: isHovering ? 0 : 5,
-          opacity: isHovering ? 0 : 1, 
-          filter: 'blur(1px)' // Sharper
+          width: isHovering ? 8 : 5, // Just a tiny pulse
+          height: isHovering ? 8 : 5,
+          opacity: 1, 
+          filter: 'blur(1px)' 
         }}
         transition={{ duration: 0.1 }}
        />

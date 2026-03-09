@@ -12,64 +12,47 @@ export default function Home() {
   const audioContextRef = useRef<AudioContext | null>(null)
 
   const playSubBass = useCallback(() => {
-    if (!audioContextRef.current) return
-    const ctx = audioContextRef.current
-    if (ctx.state === 'suspended') ctx.resume()
+    if (!audioContextRef.current) return;
+    const ctx = audioContextRef.current;
+    if (ctx.state === 'suspended') ctx.resume();
 
-    const masterBus = ctx.createGain()
-    const delayNode = ctx.createDelay(1.0)
-    const delayFeedback = ctx.createGain()
+    const masterBus = ctx.createGain();
+    masterBus.gain.value = 1.0;
+    masterBus.connect(ctx.destination);
 
-    delayNode.delayTime.value = 0.35
-    delayFeedback.gain.value = 0.3
-    delayNode.connect(delayFeedback)
-    delayFeedback.connect(delayNode)
-    delayNode.connect(masterBus)
+    // LAYER 1: The Deep Sub (The physical weight)
+    const sub = ctx.createOscillator();
+    const subGain = ctx.createGain();
+    sub.type = 'sine';
+    sub.frequency.setValueAtTime(60, ctx.currentTime);
+    sub.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.3); // Fast pitch drop
+    
+    subGain.gain.setValueAtTime(0, ctx.currentTime);
+    subGain.gain.linearRampToValueAtTime(1.0, ctx.currentTime + 0.02); // Hard attack
+    subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6); // Tight decay
+    
+    sub.connect(subGain);
+    subGain.connect(masterBus);
 
-    masterBus.gain.value = 0.9
-    masterBus.connect(ctx.destination)
+    // LAYER 2: The Knock (The tactile click, NO ringing)
+    const knock = ctx.createOscillator();
+    const knockGain = ctx.createGain();
+    knock.type = 'triangle'; 
+    knock.frequency.setValueAtTime(120, ctx.currentTime);
+    knock.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
+    
+    knockGain.gain.setValueAtTime(0, ctx.currentTime);
+    knockGain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+    knockGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15); // Disappears instantly
+    
+    knock.connect(knockGain);
+    knockGain.connect(masterBus);
 
-    const spark = ctx.createOscillator()
-    const sparkGain = ctx.createGain()
-    spark.type = 'triangle'
-    spark.frequency.setValueAtTime(1200, ctx.currentTime)
-    spark.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05)
-    sparkGain.gain.setValueAtTime(0, ctx.currentTime)
-    sparkGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.005)
-    sparkGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05)
-    spark.connect(sparkGain)
-    sparkGain.connect(masterBus)
-
-    const sub = ctx.createOscillator()
-    const subGain = ctx.createGain()
-    sub.type = 'sine'
-    sub.frequency.setValueAtTime(65, ctx.currentTime)
-    sub.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.8)
-    subGain.gain.setValueAtTime(0, ctx.currentTime)
-    subGain.gain.linearRampToValueAtTime(0.9, ctx.currentTime + 0.02)
-    subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
-    sub.connect(subGain)
-    subGain.connect(masterBus)
-
-    const ring = ctx.createOscillator()
-    const ringGain = ctx.createGain()
-    ring.type = 'sine'
-    ring.frequency.setValueAtTime(220, ctx.currentTime)
-    ringGain.gain.setValueAtTime(0, ctx.currentTime)
-    ringGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1)
-    ringGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.3)
-    ringGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
-    ring.connect(ringGain)
-    ringGain.connect(masterBus)
-    ringGain.connect(delayNode)
-
-    spark.start(ctx.currentTime)
-    sub.start(ctx.currentTime)
-    ring.start(ctx.currentTime)
-    spark.stop(ctx.currentTime + 0.1)
-    sub.stop(ctx.currentTime + 1.6)
-    ring.stop(ctx.currentTime + 1.6)
-  }, [])
+    sub.start(ctx.currentTime);
+    knock.start(ctx.currentTime);
+    sub.stop(ctx.currentTime + 0.7);
+    knock.stop(ctx.currentTime + 0.2);
+  },[]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return
